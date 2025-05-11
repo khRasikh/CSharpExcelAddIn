@@ -42,7 +42,6 @@ namespace TestAddIn
                         phone.Text = found.Tel;
                         str.Text = found.Str;
                         ort.Text = found.Ort;
-                        label4.Text = found.Name;
                     }
                     else
                     {
@@ -52,7 +51,6 @@ namespace TestAddIn
                         phone.Text = string.Empty;
                         str.Text = string.Empty;
                         ort.Text = string.Empty;
-                        label4.Text = "No";
 
                         // Ask user if they want to create a new customer
                         var result = MessageBox.Show("Customer not found. Do you want to create a new customer?",
@@ -119,7 +117,6 @@ namespace TestAddIn
             string dm = "0,00";
             string letzte = DateTime.Now.ToString("dd.MM.yy");
             string rabatt = "0";
-            string fix = "";
 
             string line = $"{knr.Text}\t{name.Text}\t{phone.Text}\t{str.Text}\t{ort.Text}\t{bemerkung}\t{phone.Text}\t{seit}\t{mal}\t{dm}\t{letzte}\t{rabatt}";
 
@@ -194,5 +191,35 @@ namespace TestAddIn
         private void labelOrtValue_Click(object sender, EventArgs e) { }
         private void label1_Click_1(object sender, EventArgs e) { }
         private void label2_Click(object sender, EventArgs e) { }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void createOrderForm_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void phone_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void knr_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
