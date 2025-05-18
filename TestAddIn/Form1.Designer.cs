@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -55,7 +56,6 @@ namespace TestAddIn
             this.str = new System.Windows.Forms.TextBox();
             this.labelOrt = new System.Windows.Forms.Label();
             this.ort = new System.Windows.Forms.TextBox();
-            this.createOrderForm = new TestAddIn.CreateOrderForm();
             this.footerPanel = new System.Windows.Forms.Panel();
             this.label2 = new System.Windows.Forms.Label();
             this.footerLabel1 = new System.Windows.Forms.Label();
@@ -67,10 +67,13 @@ namespace TestAddIn
             this.footerLabel7 = new System.Windows.Forms.Label();
             this.footerLabel8 = new System.Windows.Forms.Label();
             this.footerLabel9 = new System.Windows.Forms.Label();
+            this.createOrderForm = new TestAddIn.CreateOrderForm();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.bannerPanel.SuspendLayout();
             this.contextMenu.SuspendLayout();
             this.personalInfoPanel.SuspendLayout();
             this.footerPanel.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // search
@@ -79,7 +82,7 @@ namespace TestAddIn
             | System.Windows.Forms.AnchorStyles.Right)));
             this.search.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.25F, System.Drawing.FontStyle.Bold);
             this.search.ForeColor = System.Drawing.SystemColors.WindowText;
-            this.search.Location = new System.Drawing.Point(1144, 57);
+            this.search.Location = new System.Drawing.Point(1102, 3);
             this.search.Name = "search";
             this.search.Size = new System.Drawing.Size(214, 41);
             this.search.TabIndex = 0;
@@ -160,6 +163,7 @@ namespace TestAddIn
             this.personalInfoPanel.Controls.Add(this.labelName);
             this.personalInfoPanel.Controls.Add(this.name);
             this.personalInfoPanel.Controls.Add(this.labelPhone);
+            this.personalInfoPanel.Controls.Add(this.search);
             this.personalInfoPanel.Controls.Add(this.phone);
             this.personalInfoPanel.Controls.Add(this.labelStr);
             this.personalInfoPanel.Controls.Add(this.str);
@@ -169,7 +173,7 @@ namespace TestAddIn
             this.personalInfoPanel.ForeColor = System.Drawing.Color.Yellow;
             this.personalInfoPanel.Location = new System.Drawing.Point(12, 60);
             this.personalInfoPanel.Name = "personalInfoPanel";
-            this.personalInfoPanel.Size = new System.Drawing.Size(1102, 92);
+            this.personalInfoPanel.Size = new System.Drawing.Size(1346, 92);
             this.personalInfoPanel.TabIndex = 2;
             // 
             // labelKNR
@@ -281,23 +285,6 @@ namespace TestAddIn
             this.ort.Name = "ort";
             this.ort.Size = new System.Drawing.Size(269, 32);
             this.ort.TabIndex = 9;
-            // 
-            // createOrderForm
-            // 
-            this.createOrderForm.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.createOrderForm.AutoScroll = true;
-            this.createOrderForm.AutoScrollMargin = new System.Drawing.Size(0, 2);
-            this.createOrderForm.AutoSize = true;
-            this.createOrderForm.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.createOrderForm.Location = new System.Drawing.Point(141, 158);
-            this.createOrderForm.MinimumSize = new System.Drawing.Size(1066, 408);
-            this.createOrderForm.Name = "createOrderForm";
-            this.createOrderForm.Padding = new System.Windows.Forms.Padding(3);
-            this.createOrderForm.Size = new System.Drawing.Size(1066, 408);
-            this.createOrderForm.TabIndex = 1;
-            this.createOrderForm.Load += new System.EventHandler(this.createOrderForm_Load);
             // 
             // footerPanel
             // 
@@ -444,6 +431,34 @@ namespace TestAddIn
             this.footerLabel9.TabIndex = 8;
             this.footerLabel9.Text = "F5:";
             // 
+            // createOrderForm
+            // 
+            this.createOrderForm.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.createOrderForm.AutoScroll = true;
+            this.createOrderForm.AutoScrollMargin = new System.Drawing.Size(0, 2);
+            this.createOrderForm.AutoSize = true;
+            this.createOrderForm.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.createOrderForm.Location = new System.Drawing.Point(103, 0);
+            this.createOrderForm.MinimumSize = new System.Drawing.Size(1066, 408);
+            this.createOrderForm.Name = "createOrderForm";
+            this.createOrderForm.Padding = new System.Windows.Forms.Padding(3);
+            this.createOrderForm.Size = new System.Drawing.Size(1066, 408);
+            this.createOrderForm.TabIndex = 1;
+            this.createOrderForm.Load += new System.EventHandler(this.createOrderForm_Load);
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.createOrderForm);
+            this.panel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.panel1.ForeColor = System.Drawing.Color.Black;
+            this.panel1.Location = new System.Drawing.Point(16, 170);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1346, 459);
+            this.panel1.TabIndex = 10;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -451,11 +466,10 @@ namespace TestAddIn
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.MediumBlue;
             this.ClientSize = new System.Drawing.Size(1370, 715);
-            this.Controls.Add(this.createOrderForm);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.footerPanel);
             this.Controls.Add(this.personalInfoPanel);
             this.Controls.Add(this.bannerPanel);
-            this.Controls.Add(this.search);
             this.Name = "Form1";
             this.Text = "Test AddIn";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
@@ -466,8 +480,9 @@ namespace TestAddIn
             this.personalInfoPanel.PerformLayout();
             this.footerPanel.ResumeLayout(false);
             this.footerPanel.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -503,6 +518,7 @@ namespace TestAddIn
         private System.Windows.Forms.TextBox phone;
         private System.Windows.Forms.TextBox str;
         private System.Windows.Forms.TextBox ort;
+        private Panel panel1;
     }
 
     public class CreateOrderForm : UserControl
@@ -515,11 +531,15 @@ namespace TestAddIn
         private readonly TextBox textBoxExtra;
         private readonly TextBox textBoxPrice;
         private readonly Label lblRabbat;
-        private readonly Label lblRabbatValue;
+        private readonly TextBox textRabbatValue;
         private readonly Label lblCount;
         private readonly Label lblTotal;
         private readonly Label lblCountValue;
         private readonly Label lblTotalValue;
+
+        public bool KeyPreview { get; }
+
+        private List<string[]> tempOrders; // Temporary storage for new orders
 
         // Centralized constants
         private static readonly Font DefaultTextBoxFont = new Font("Microsoft Sans Serif", 16F);
@@ -531,8 +551,12 @@ namespace TestAddIn
         private const int DataGridViewHeight = 100;
         private const int FormHeight = 300;
 
+        
+
         public CreateOrderForm()
         {
+            tempOrders = new List<string[]>();
+
             // Initialize controls
             dataGridView = new DataGridView();
             panelLastOrdersTable = new Panel();
@@ -542,11 +566,16 @@ namespace TestAddIn
             textBoxExtra = new TextBox();
             textBoxPrice = new TextBox();
             lblRabbat = new Label();
-            lblRabbatValue = new Label();
+            textRabbatValue = new TextBox();
             lblCount = new Label();
             lblTotal = new Label();
             lblCountValue = new Label();
             lblTotalValue = new Label();
+
+            // Set KeyPreview and attach KeyDown early
+            KeyPreview = true;
+            KeyDown += CreateOrderForm_KeyDown;
+            System.Diagnostics.Debug.WriteLine("CreateOrderForm constructor: Attached CreateOrderForm_KeyDown at " + DateTime.Now);
 
             if (IsHandleCreated)
             {
@@ -556,17 +585,17 @@ namespace TestAddIn
             {
                 HandleCreated += (s, e) => InitializeComponents();
             }
-            if (!DesignMode) // Apply runtime-specific settings only at runtime
+            if (!DesignMode)
             {
                 MinimumSize = new Size(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
             }
+            System.Diagnostics.Debug.WriteLine("CreateOrderForm constructor called at " + DateTime.Now);
         }
 
         private void InitializeComponents()
         {
             // Initialize DataGridView
             ConfigureDataGridView(dataGridView, new Point(0, 0), new Size(ControlWidth, DataGridViewHeight));
-            // Replace the existing DataGridView column setup with:
             dataGridView.Columns.Add("KundeName", "Kunde Name");
             dataGridView.Columns.Add("KundeNr", "Kunde Nr.");
             dataGridView.Columns.Add("Anz", "Anz");
@@ -580,29 +609,35 @@ namespace TestAddIn
             // Initialize panel
             ConfigurePanel(panelLastOrdersTable, new Point(0, 120), new Size(ControlWidth, PanelHeight));
 
-            // Initialize TextBoxes
-            ConfigureTextBox(textBoxCount, "textBoxCount", new Point(2, 1), new Size(235, TextBoxHeight), 1, textBox1_TextChanged);
-            ConfigureTextBox(textBoxArticleNumber, "textBoxArticleNumber", new Point(260, 2), new Size(249, TextBoxHeight), 7, textBox4_TextChanged);
-            ConfigureTextBox(textBoxCategory, "textBoxCategory", new Point(536, 2), new Size(83, TextBoxHeight), 9, textBox5_TextChanged);
-            ConfigureTextBox(textBoxExtra, "textBoxExtra", new Point(652, 2), new Size(83, TextBoxHeight), 10);
-            ConfigureTextBox(textBoxPrice, "textBoxPrice", new Point(877, 2), new Size(83, TextBoxHeight), 11);
+            // Initialize TextBoxes with KeyDown events
+            ConfigureTextBox(textBoxCount, "textBoxCount", new Point(2, 1), new Size(235, TextBoxHeight), 1, textBox1_TextChanged, TextBox_KeyDown);
+            ConfigureTextBox(textBoxArticleNumber, "textBoxArticleNumber", new Point(260, 2), new Size(249, TextBoxHeight), 7, textBox4_TextChanged, TextBox_KeyDown);
+            ConfigureTextBox(textBoxCategory, "textBoxCategory", new Point(536, 2), new Size(83, TextBoxHeight), 9, textBox5_TextChanged, TextBox_KeyDown);
+            ConfigureTextBox(textBoxExtra, "textBoxExtra", new Point(652, 2), new Size(83, TextBoxHeight), 10, null, TextBox_KeyDown);
+            ConfigureTextBox(textBoxPrice, "textBoxPrice", new Point(877, 2), new Size(83, TextBoxHeight), 11, null, TextBox_KeyDown);
+            ConfigureTextBox(textRabbatValue, "textBoxRabbat", new Point(220, 240), new Size(83, TextBoxHeight), 12, null, TextBox_KeyDown);
 
             // Add TextBoxes to panel
             panelLastOrdersTable.Controls.AddRange(new Control[] { textBoxCount, textBoxArticleNumber, textBoxCategory, textBoxExtra, textBoxPrice });
 
             // Initialize Labels
             ConfigureLabel(lblRabbat, "Rabbat:", new Point(0, 240), Color.Yellow);
-            ConfigureLabel(lblRabbatValue, "-€0.57", new Point(220, 240), Color.LightGreen);
             ConfigureLabel(lblCount, "Count:", new Point(360, 240), Color.Yellow);
-            ConfigureLabel(lblCountValue, " 3", new Point(560, 240), Color.LightGreen);
+            ConfigureLabel(lblCountValue, "0", new Point(560, 240), Color.LightGreen);
             ConfigureLabel(lblTotal, "Sum:", new Point(720, 240), Color.Yellow);
-            ConfigureLabel(lblTotalValue, "€31.50", new Point(920, 240), Color.LightGreen);
+            ConfigureLabel(lblTotalValue, "€0.00", new Point(920, 240), Color.LightGreen);
 
             // Add controls to UserControl
-            Controls.AddRange(new Control[] { dataGridView, panelLastOrdersTable, lblRabbat, lblRabbatValue, lblCount, lblCountValue, lblTotal, lblTotalValue });
+            Controls.AddRange(new Control[] { dataGridView, panelLastOrdersTable, lblRabbat, textRabbatValue, lblCount, lblCountValue, lblTotal, lblTotalValue });
+
+            System.Diagnostics.Debug.WriteLine("InitializeComponents started at " + DateTime.Now);
+            textBoxCount.Focus();
+            System.Diagnostics.Debug.WriteLine("InitializeComponents: Initial focus set to textBoxCount at " + DateTime.Now);
 
             // Set UserControl size
             Size = new Size(ControlWidth, FormHeight);
+            System.Diagnostics.Debug.WriteLine("InitializeComponents completed at " + DateTime.Now);
+
         }
 
         private void ConfigureDataGridView(DataGridView grid, Point location, Size size)
@@ -626,7 +661,7 @@ namespace TestAddIn
             panel.TabIndex = 10;
         }
 
-        private void ConfigureTextBox(TextBox textBox, string name, Point location, Size size, int tabIndex, EventHandler textChangedHandler = null)
+        private void ConfigureTextBox(TextBox textBox, string name, Point location, Size size, int tabIndex, EventHandler textChangedHandler, KeyEventHandler keyDownHandler)
         {
             textBox.Font = DefaultTextBoxFont;
             textBox.Location = location;
@@ -637,6 +672,10 @@ namespace TestAddIn
             if (textChangedHandler != null)
             {
                 textBox.TextChanged += textChangedHandler;
+            }
+            if (keyDownHandler != null)
+            {
+                textBox.KeyDown += keyDownHandler;
             }
         }
 
@@ -649,18 +688,144 @@ namespace TestAddIn
             label.AutoSize = true;
         }
 
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            TextBox current = sender as TextBox;
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.SuppressKeyPress = true; // Prevent beep
+                if (current == textRabbatValue)
+                {
+                    SubmitForm();
+                }
+                else
+                {
+                    SelectNextControl(current, true, true, true, true);
+                }
+            }
+            else if (e.KeyCode == Keys.Back && string.IsNullOrEmpty(current.Text))
+            {
+                e.SuppressKeyPress = true; // Navigate only if textbox is empty
+                SelectNextControl(current, false, true, true, true);
+            }
+        }
+
+        private void CreateOrderForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            MessageBox.Show("test " + e.KeyCode, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            if (e.KeyCode == Keys.F2 && ActiveControl == textRabbatValue)
+            {
+                e.SuppressKeyPress = true;
+                SaveOrders();
+            }
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            System.Diagnostics.Debug.WriteLine($"ProcessCmdKey: Key {keyData} pressed at {DateTime.Now}");
+            if (keyData == Keys.F3 && tempOrders.Count > 0)
+            {
+                System.Diagnostics.Debug.WriteLine($"ProcessCmdKey: Calling SaveOrders for F3 at {DateTime.Now}");
+                SaveOrders();
+                return true; // Indicate key was handled
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+
+        private void SubmitForm()
+        {
+            // Store form data in tempOrders
+            string[] order = new string[]
+            {
+            "Customer", // KundeName (placeholder)
+            "812",     // KundeNr
+            textBoxCount.Text,
+            textBoxArticleNumber.Text,
+            textBoxCategory.Text,
+            "",        // SJ1 (placeholder)
+            textBoxExtra.Text,
+            textBoxPrice.Text,
+            textRabbatValue.Text
+            };
+            tempOrders.Add(order);
+
+            // Update DataGridView
+            dataGridView.Rows.Clear();
+            foreach (var ord in tempOrders)
+            {
+                dataGridView.Rows.Add(ord);
+            }
+
+            // Update count and total
+            lblCountValue.Text = tempOrders.Count.ToString();
+            decimal total = 0;
+            foreach (var ord in tempOrders)
+            {
+                if (decimal.TryParse(ord[7], out decimal price) && decimal.TryParse(ord[2], out decimal count))
+                {
+                    decimal discount = decimal.TryParse(ord[8], out decimal rabatt) ? rabatt : 0;
+                    total += (price * count) * (1 - discount / 100);
+                }
+            }
+            lblTotalValue.Text = $"€{total:F2}";
+
+            // Reset form and focus on first field
+            textBoxCount.Text = "";
+            textBoxArticleNumber.Text = "";
+            textBoxCategory.Text = "";
+            textBoxExtra.Text = "";
+            textBoxPrice.Text = "";
+            textRabbatValue.Text = "";
+            textBoxCount.Focus();
+        }
+
+        private void SaveOrders()
+        {
+            try
+            {
+                string filePath = Path.Combine(Application.StartupPath, "orders.txt");
+                List<string> lines = File.Exists(filePath) ? new List<string>(File.ReadAllLines(filePath)) : new List<string>();
+
+                // Add header if file is empty
+                if (lines.Count == 0)
+                {
+                    lines.Add("Kunde Name\tKunde Nr.\tAnz\tNr\tBez\tS/J\tExtra\tPreis\tRabatt");
+                }
+
+                // Append new orders
+                foreach (var order in tempOrders)
+                {
+                    lines.Add(string.Join("\t", order));
+                }
+
+                File.WriteAllLines(filePath, lines);
+                MessageBox.Show("Orders saved successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                // Clear temporary storage and reset form
+                tempOrders.Clear();
+                dataGridView.Rows.Clear();
+                LoadSampleData();
+                textBoxCount.Focus();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Orders not saved!", "Failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show($"Error saving orders: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void LoadSampleData()
         {
-            if (!DesignMode) // Skip at design time
+            if (!DesignMode)
             {
-                // Load data directly if handle is created
                 if (dataGridView.IsHandleCreated)
                 {
                     AddSampleRows();
                 }
                 else
                 {
-                    // Defer loading until handle is created
                     dataGridView.HandleCreated += (s, e) => AddSampleRows();
                 }
             }
@@ -672,8 +837,7 @@ namespace TestAddIn
 
             if (!File.Exists(filePath))
             {
-                MessageBox.Show("orders.txt not found!", "Error",
-                              MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("orders.txt not found!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -681,41 +845,33 @@ namespace TestAddIn
             {
                 dataGridView.Rows.Clear();
                 string[] lines = File.ReadAllLines(filePath);
+                string getCustomerNumber = "812";
 
-                string getCustomerNumber = "812" ?? "";
-
-                // Skip header if exists
                 int startLine = lines.Length > 0 && lines[0].Contains("Kunde Name") ? 1 : 0;
 
                 for (int i = startLine; i < lines.Length; i++)
                 {
-                    // Split by tabs or multiple spaces
                     string[] columns = Regex.Split(lines[i].Trim(), @"\t|\s{2,}");
-
-                    // Filter for KundeNr "812" and ensure we have enough columns
                     if (columns.Length >= 9 && columns[1].Trim() == getCustomerNumber)
                     {
-                        // Reconstruct Bez which might contain spaces
                         string bez = string.Join(" ", columns.Skip(4).Take(columns.Length - 8));
-
                         dataGridView.Rows.Add(
-                            columns[0].Trim(),  // KundeName
-                            columns[1].Trim(),  // KundeNr
-                            columns[2].Trim(),  // Anz
-                            columns[3].Trim(),  // Nr
-                            bez,                // Bez
-                            columns[columns.Length - 4].Trim(),  // SJ1
-                            columns[columns.Length - 3].Trim(),  // Extra
-                            columns[columns.Length - 2].Trim(),  // Preis
-                            columns[columns.Length - 1].Trim()  // Rabatt
+                            columns[0].Trim(),
+                            columns[1].Trim(),
+                            columns[2].Trim(),
+                            columns[3].Trim(),
+                            bez,
+                            columns[columns.Length - 4].Trim(),
+                            columns[columns.Length - 3].Trim(),
+                            columns[columns.Length - 2].Trim(),
+                            columns[columns.Length - 1].Trim()
                         );
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading orders: {ex.Message}", "Error",
-                               MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error loading orders: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -739,7 +895,6 @@ namespace TestAddIn
             base.Dispose(disposing);
         }
 
-        // Event handlers for TextChanged events
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
             // Add logic for textBoxCount TextChanged event if needed
@@ -754,6 +909,14 @@ namespace TestAddIn
         {
             // Add logic for textBoxCategory TextChanged event if needed
         }
+        private void TextBoxRabbatValue_KeyPress(object sender, KeyPressEventArgs e)
+         {
+           if (e.KeyChar == (char) Keys.Enter)
+              {
+                   e.Handled = true; // Prevent beep
+                    SubmitForm();
+                }
+         }
     }
 }
 
