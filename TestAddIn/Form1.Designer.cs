@@ -67,8 +67,8 @@ namespace TestAddIn
             this.footerLabel7 = new System.Windows.Forms.Label();
             this.footerLabel8 = new System.Windows.Forms.Label();
             this.footerLabel9 = new System.Windows.Forms.Label();
-            this.createOrderForm = new TestAddIn.CreateOrderForm();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.createOrderForm = new TestAddIn.CreateOrderForm();
             this.bannerPanel.SuspendLayout();
             this.contextMenu.SuspendLayout();
             this.personalInfoPanel.SuspendLayout();
@@ -262,15 +262,16 @@ namespace TestAddIn
             this.str.Location = new System.Drawing.Point(89, 39);
             this.str.Margin = new System.Windows.Forms.Padding(2);
             this.str.Name = "str";
-            this.str.Size = new System.Drawing.Size(249, 32);
+            this.str.Size = new System.Drawing.Size(464, 32);
             this.str.TabIndex = 7;
+            this.str.TextChanged += new System.EventHandler(this.str_TextChanged);
             // 
             // labelOrt
             // 
             this.labelOrt.AutoSize = true;
             this.labelOrt.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold);
             this.labelOrt.ForeColor = System.Drawing.Color.Yellow;
-            this.labelOrt.Location = new System.Drawing.Point(340, 39);
+            this.labelOrt.Location = new System.Drawing.Point(557, 39);
             this.labelOrt.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelOrt.Name = "labelOrt";
             this.labelOrt.Size = new System.Drawing.Size(61, 26);
@@ -280,7 +281,7 @@ namespace TestAddIn
             // ort
             // 
             this.ort.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F);
-            this.ort.Location = new System.Drawing.Point(400, 39);
+            this.ort.Location = new System.Drawing.Point(617, 39);
             this.ort.Margin = new System.Windows.Forms.Padding(2);
             this.ort.Name = "ort";
             this.ort.Size = new System.Drawing.Size(269, 32);
@@ -431,6 +432,17 @@ namespace TestAddIn
             this.footerLabel9.TabIndex = 8;
             this.footerLabel9.Text = "F5:";
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.createOrderForm);
+            this.panel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.panel1.ForeColor = System.Drawing.Color.Black;
+            this.panel1.Location = new System.Drawing.Point(16, 170);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(1346, 459);
+            this.panel1.TabIndex = 10;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            // 
             // createOrderForm
             // 
             this.createOrderForm.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -447,17 +459,6 @@ namespace TestAddIn
             this.createOrderForm.Size = new System.Drawing.Size(1066, 408);
             this.createOrderForm.TabIndex = 1;
             this.createOrderForm.Load += new System.EventHandler(this.createOrderForm_Load);
-            // 
-            // panel1
-            // 
-            this.panel1.Controls.Add(this.createOrderForm);
-            this.panel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.panel1.ForeColor = System.Drawing.Color.Black;
-            this.panel1.Location = new System.Drawing.Point(16, 170);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1346, 459);
-            this.panel1.TabIndex = 10;
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // Form1
             // 
@@ -740,7 +741,7 @@ namespace TestAddIn
             string[] order = new string[]
             {
             "Customer", // KundeName (placeholder)
-            "812",     // KundeNr
+            "0",     // KundeNr
             textBoxCount.Text,
             textBoxArticleNumber.Text,
             textBoxCategory.Text,

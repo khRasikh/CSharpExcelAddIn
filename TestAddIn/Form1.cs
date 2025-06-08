@@ -1,25 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using TestAddIn.customer;
 
 namespace TestAddIn
 {
-    public partial class Form1 : Form
+ 
+public partial class Form1 : Form
     {
+        private ListBox customerListBox;
         public Form1()
         {
             InitializeComponent();
-            //C:\Users\KhudaDadRasikh\Desktop\projects\.net\crud-main\WindowsFormsApp1\WindowsFormsApp1\db\customers.txt
+            // Add ListBox programmatically with professional attributes
+            customerListBox = new ListBox
+            {
+                Name = "customerListBox",
+                Visible = false,
+                Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular), // Professional, readable font
+                ForeColor = System.Drawing.Color.DarkBlue, // Consistent with your choice
+                BackColor = System.Drawing.Color.WhiteSmoke, // Subtle background for contrast
+                BorderStyle = BorderStyle.FixedSingle, // Clean border
+                Height = 400, // Set height to 400px as specified
+                ScrollAlwaysVisible = true, // Visible vertical scrollbar for overflow
+                IntegralHeight = false, // Allow exact height
+                MultiColumn = false, // Single-column display
+                SelectionMode = SelectionMode.One, // Single item selection
+                ItemHeight = 20, // Adjust item height to fit font
+            };
+            this.Controls.Add(customerListBox);
+            customerListBox.SelectedIndexChanged += customerListBox_SelectedIndexChanged;
+
+            // Load customer file as db
             Customer.LoadCustomers("customers.txt");
             this.knr.KeyDown += Input_KeyDown;
             this.name.KeyDown += Input_KeyDown;
             this.phone.KeyDown += Input_KeyDown;
             this.str.KeyDown += Input_KeyDown;
             this.ort.KeyDown += Input_KeyDown;
-
         }
 
 
@@ -225,6 +247,113 @@ namespace TestAddIn
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+        private void customerListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (customerListBox == null || customerListBox.SelectedIndex < 0) return;
+
+            var input = str.Text.Trim().ToLower();
+            var customers = Customer.GetAll();
+            // Group customers by Name and take the first occurrence
+            var filteredCustomers = customers
+                .Where(c => c.Str != null && c.Str.ToLower().StartsWith(input))
+                .GroupBy(c => c.Name)
+                .Select(g => g.First())
+                .ToList();
+
+            if (customerListBox.SelectedIndex < filteredCustomers.Count)
+            {
+                var selectedCustomer = filteredCustomers[customerListBox.SelectedIndex];
+                str.Text = selectedCustomer.Str;
+                ort.Text = selectedCustomer.Ort;
+                customerListBox.Visible = false;
+
+                // Set cursor to the street number
+                int streetNumberIndex = FindStreetNumberIndex(selectedCustomer.Str);
+                if (streetNumberIndex >= 0)
+                {
+                    str.SelectionStart = streetNumberIndex;
+                    str.SelectionLength = 0;
+                }
+            }
+        }
+        private int FindStreetNumberIndex(string street)
+        {
+            for (int i = 0; i < street.Length; i++)
+            {
+                if (char.IsDigit(street[i]))
+                {
+                    if (i > 0 && (street[i - 1] == ' ' || street[i - 1] == '-' || street[i - 1] == '.'))
+                    {
+                        return i;
+                    }
+                    else if (i == 0)
+                    {
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+        private void str_TextChanged(object sender, EventArgs e)
+        {
+            if (customerListBox == null) return; // Safety check
+
+            var input = str.Text.Trim();
+            customerListBox.Items.Clear();
+            customerListBox.Visible = false;
+
+            if (input.Length >= 2) // Only process if at least 2 characters
+            {
+                var customers = Customer.GetAll();
+                // Group customers by Name and take the first occurrence
+                var matches = customers
+                    .Where(c => c.Str != null && c.Str.ToLower().StartsWith(input.ToLower()))
+                    .GroupBy(c => c.Name)
+                    .Select(g => g.First())
+                    .ToList();
+
+                foreach (var customer in matches)
+                {
+                    customerListBox.Items.Add($"{customer.Str} ({customer.Ort})");
+                }
+
+                if (matches.Count > 0)
+                {
+                    customerListBox.Visible = true;
+                    // Ensure str control is valid before accessing Bottom
+                    if (str != null && str.IsHandleCreated)
+                    {
+                        customerListBox.Top = str.Bottom + 60; // Position below str TextBox with 20px margin
+                    }
+                    else
+                    {
+                        // Fallback: Position relative to form's top
+                        customerListBox.Top = 100;
+                    }
+                    customerListBox.Left = str?.Left ?? 10; // Fallback to 10 if str is null
+                    customerListBox.Width = str?.Width ?? 200; // Fallback to 200 if str is null
+                    customerListBox.Height = 400; // Match constructor height
+                    customerListBox.BringToFront(); // Ensure highest display priority
+
+                    if (matches.Count == 1)
+                    {
+                        // Single match found, populate fields
+                        var customer = matches[0];
+                        str.Text = customer.Str;
+                        ort.Text = customer.Ort;
+                        customerListBox.Visible = false;
+
+                        // Set cursor to the street number
+                        int streetNumberIndex = FindStreetNumberIndex(customer.Str);
+                        if (streetNumberIndex >= 0)
+                        {
+                            str.SelectionStart = streetNumberIndex;
+                            str.SelectionLength = 0;
+                        }
+                    }
+                }
+            }
         }
     }
 }
