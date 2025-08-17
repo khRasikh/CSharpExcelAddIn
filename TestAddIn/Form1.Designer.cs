@@ -38,6 +38,7 @@ namespace TestAddIn
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.search = new System.Windows.Forms.TextBox();
             this.bannerPanel = new System.Windows.Forms.Panel();
@@ -48,22 +49,9 @@ namespace TestAddIn
             this.menuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.menuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.personalInfoPanel = new System.Windows.Forms.Panel();
-            this.textBoxPrice = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.labelLastDiscountValue = new System.Windows.Forms.Label();
             this.lastOrdersTable = new System.Windows.Forms.DataGridView();
-            this.lastOrderName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastOrderNr = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastOrderSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastOrderExtra = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastOrderDiscount = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastOrderPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Rabatt = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.textBoxExtra = new System.Windows.Forms.TextBox();
-            this.textBoxName = new System.Windows.Forms.TextBox();
-            this.textBoxNr = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.orderExtra = new System.Windows.Forms.TextBox();
-            this.textBoxCount = new System.Windows.Forms.TextBox();
-            this.textBoxSize = new System.Windows.Forms.TextBox();
             this.textBoxDiscount = new System.Windows.Forms.TextBox();
             this.labelCountValue = new System.Windows.Forms.Label();
             this.labelSumValue = new System.Windows.Forms.Label();
@@ -91,6 +79,12 @@ namespace TestAddIn
             this.footerLabel7 = new System.Windows.Forms.Label();
             this.footerLabel8 = new System.Windows.Forms.Label();
             this.footerLabel9 = new System.Windows.Forms.Label();
+            this.lastOrderAnz = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastOrderNr = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastOrderName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastOrderSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastOrderExtra = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastOrderPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bannerPanel.SuspendLayout();
             this.contextMenu.SuspendLayout();
             this.personalInfoPanel.SuspendLayout();
@@ -180,15 +174,9 @@ namespace TestAddIn
             // 
             // personalInfoPanel
             // 
-            this.personalInfoPanel.Controls.Add(this.textBoxPrice);
+            this.personalInfoPanel.Controls.Add(this.label1);
+            this.personalInfoPanel.Controls.Add(this.labelLastDiscountValue);
             this.personalInfoPanel.Controls.Add(this.lastOrdersTable);
-            this.personalInfoPanel.Controls.Add(this.textBoxExtra);
-            this.personalInfoPanel.Controls.Add(this.textBoxName);
-            this.personalInfoPanel.Controls.Add(this.textBoxNr);
-            this.personalInfoPanel.Controls.Add(this.textBox4);
-            this.personalInfoPanel.Controls.Add(this.orderExtra);
-            this.personalInfoPanel.Controls.Add(this.textBoxCount);
-            this.personalInfoPanel.Controls.Add(this.textBoxSize);
             this.personalInfoPanel.Controls.Add(this.textBoxDiscount);
             this.personalInfoPanel.Controls.Add(this.labelCountValue);
             this.personalInfoPanel.Controls.Add(this.labelSumValue);
@@ -214,29 +202,39 @@ namespace TestAddIn
             this.personalInfoPanel.TabIndex = 2;
             this.personalInfoPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.personalInfoPanel_Paint);
             // 
-            // textBoxPrice
+            // label1
             // 
-            this.textBoxPrice.BackColor = System.Drawing.Color.MediumBlue;
-            this.textBoxPrice.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.textBoxPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxPrice.ForeColor = System.Drawing.Color.Lime;
-            this.textBoxPrice.Location = new System.Drawing.Point(1061, 410);
-            this.textBoxPrice.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxPrice.Name = "textBoxPrice";
-            this.textBoxPrice.Size = new System.Drawing.Size(105, 41);
-            this.textBoxPrice.TabIndex = 30;
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold);
+            this.label1.ForeColor = System.Drawing.Color.Lime;
+            this.label1.Location = new System.Drawing.Point(241, 534);
+            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(43, 36);
+            this.label1.TabIndex = 24;
+            this.label1.Text = "%";
+            // 
+            // labelLastDiscountValue
+            // 
+            this.labelLastDiscountValue.AutoSize = true;
+            this.labelLastDiscountValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold);
+            this.labelLastDiscountValue.ForeColor = System.Drawing.Color.Red;
+            this.labelLastDiscountValue.Location = new System.Drawing.Point(352, 533);
+            this.labelLastDiscountValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelLastDiscountValue.Name = "labelLastDiscountValue";
+            this.labelLastDiscountValue.Size = new System.Drawing.Size(129, 36);
+            this.labelLastDiscountValue.TabIndex = 23;
+            this.labelLastDiscountValue.Text = "(-€0.00)";
             // 
             // lastOrdersTable
             // 
-            this.lastOrdersTable.AllowUserToAddRows = false;
-            this.lastOrdersTable.AllowUserToDeleteRows = false;
+            this.lastOrdersTable.AllowUserToOrderColumns = true;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Yellow;
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Lime;
             this.lastOrdersTable.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.lastOrdersTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.lastOrdersTable.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.lastOrdersTable.BackgroundColor = System.Drawing.Color.MediumBlue;
             this.lastOrdersTable.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lastOrdersTable.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
@@ -244,31 +242,29 @@ namespace TestAddIn
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.MediumBlue;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Lime;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.lastOrdersTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.lastOrdersTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.lastOrdersTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.lastOrderName,
+            this.lastOrderAnz,
             this.lastOrderNr,
+            this.lastOrderName,
             this.lastOrderSize,
             this.lastOrderExtra,
-            this.lastOrderDiscount,
-            this.lastOrderPrice,
-            this.Rabatt});
+            this.lastOrderPrice});
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.Color.MediumBlue;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.White;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.Lime;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Black;
             dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.lastOrdersTable.DefaultCellStyle = dataGridViewCellStyle4;
             this.lastOrdersTable.GridColor = System.Drawing.Color.MediumBlue;
             this.lastOrdersTable.Location = new System.Drawing.Point(60, 108);
             this.lastOrdersTable.Name = "lastOrdersTable";
-            this.lastOrdersTable.ReadOnly = true;
             dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle5.BackColor = System.Drawing.Color.MediumBlue;
             dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -279,146 +275,14 @@ namespace TestAddIn
             this.lastOrdersTable.RowHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.lastOrdersTable.RowHeadersVisible = false;
             this.lastOrdersTable.RowHeadersWidth = 5;
-            this.lastOrdersTable.RowTemplate.Height = 28;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.lastOrdersTable.RowsDefaultCellStyle = dataGridViewCellStyle6;
+            this.lastOrdersTable.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lastOrdersTable.RowTemplate.Height = 25;
             this.lastOrdersTable.ScrollBars = System.Windows.Forms.ScrollBars.None;
-            this.lastOrdersTable.Size = new System.Drawing.Size(1106, 266);
+            this.lastOrdersTable.Size = new System.Drawing.Size(1106, 397);
             this.lastOrdersTable.TabIndex = 16;
             this.lastOrdersTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
-            // 
-            // lastOrderName
-            // 
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.CornflowerBlue;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.MediumBlue;
-            this.lastOrderName.DefaultCellStyle = dataGridViewCellStyle3;
-            this.lastOrderName.HeaderText = "Name";
-            this.lastOrderName.MinimumWidth = 10;
-            this.lastOrderName.Name = "lastOrderName";
-            this.lastOrderName.ReadOnly = true;
-            // 
-            // lastOrderNr
-            // 
-            this.lastOrderNr.HeaderText = "Nr.";
-            this.lastOrderNr.Name = "lastOrderNr";
-            this.lastOrderNr.ReadOnly = true;
-            // 
-            // lastOrderSize
-            // 
-            this.lastOrderSize.HeaderText = "Bez";
-            this.lastOrderSize.Name = "lastOrderSize";
-            this.lastOrderSize.ReadOnly = true;
-            // 
-            // lastOrderExtra
-            // 
-            this.lastOrderExtra.HeaderText = "S/J";
-            this.lastOrderExtra.Name = "lastOrderExtra";
-            this.lastOrderExtra.ReadOnly = true;
-            // 
-            // lastOrderDiscount
-            // 
-            this.lastOrderDiscount.HeaderText = "Extra";
-            this.lastOrderDiscount.Name = "lastOrderDiscount";
-            this.lastOrderDiscount.ReadOnly = true;
-            // 
-            // lastOrderPrice
-            // 
-            this.lastOrderPrice.HeaderText = "Preis";
-            this.lastOrderPrice.Name = "lastOrderPrice";
-            this.lastOrderPrice.ReadOnly = true;
-            // 
-            // Rabatt
-            // 
-            this.Rabatt.HeaderText = "Rabbat";
-            this.Rabatt.Name = "Rabatt";
-            this.Rabatt.ReadOnly = true;
-            // 
-            // textBoxExtra
-            // 
-            this.textBoxExtra.BackColor = System.Drawing.Color.MediumBlue;
-            this.textBoxExtra.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.textBoxExtra.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxExtra.ForeColor = System.Drawing.Color.Lime;
-            this.textBoxExtra.Location = new System.Drawing.Point(924, 410);
-            this.textBoxExtra.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxExtra.Name = "textBoxExtra";
-            this.textBoxExtra.Size = new System.Drawing.Size(105, 41);
-            this.textBoxExtra.TabIndex = 29;
-            // 
-            // textBoxName
-            // 
-            this.textBoxName.BackColor = System.Drawing.Color.MediumBlue;
-            this.textBoxName.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.textBoxName.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxName.ForeColor = System.Drawing.Color.Lime;
-            this.textBoxName.Location = new System.Drawing.Point(67, 412);
-            this.textBoxName.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxName.Name = "textBoxName";
-            this.textBoxName.Size = new System.Drawing.Size(205, 41);
-            this.textBoxName.TabIndex = 28;
-            // 
-            // textBoxNr
-            // 
-            this.textBoxNr.BackColor = System.Drawing.Color.MediumBlue;
-            this.textBoxNr.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.textBoxNr.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxNr.ForeColor = System.Drawing.Color.Lime;
-            this.textBoxNr.Location = new System.Drawing.Point(305, 412);
-            this.textBoxNr.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxNr.Name = "textBoxNr";
-            this.textBoxNr.Size = new System.Drawing.Size(168, 41);
-            this.textBoxNr.TabIndex = 27;
-            // 
-            // textBox4
-            // 
-            this.textBox4.BackColor = System.Drawing.Color.MediumBlue;
-            this.textBox4.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox4.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.textBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox4.ForeColor = System.Drawing.Color.Lime;
-            this.textBox4.Location = new System.Drawing.Point(1148, 340);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(2);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(68, 34);
-            this.textBox4.TabIndex = 26;
-            // 
-            // orderExtra
-            // 
-            this.orderExtra.BackColor = System.Drawing.Color.MediumBlue;
-            this.orderExtra.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.orderExtra.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.orderExtra.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.orderExtra.ForeColor = System.Drawing.Color.Lime;
-            this.orderExtra.Location = new System.Drawing.Point(1046, 435);
-            this.orderExtra.Margin = new System.Windows.Forms.Padding(2);
-            this.orderExtra.Name = "orderExtra";
-            this.orderExtra.Size = new System.Drawing.Size(68, 34);
-            this.orderExtra.TabIndex = 25;
-            // 
-            // textBoxCount
-            // 
-            this.textBoxCount.BackColor = System.Drawing.Color.MediumBlue;
-            this.textBoxCount.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.textBoxCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxCount.ForeColor = System.Drawing.Color.Lime;
-            this.textBoxCount.Location = new System.Drawing.Point(754, 412);
-            this.textBoxCount.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxCount.Name = "textBoxCount";
-            this.textBoxCount.Size = new System.Drawing.Size(111, 41);
-            this.textBoxCount.TabIndex = 24;
-            // 
-            // textBoxSize
-            // 
-            this.textBoxSize.BackColor = System.Drawing.Color.MediumBlue;
-            this.textBoxSize.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.textBoxSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxSize.ForeColor = System.Drawing.Color.Lime;
-            this.textBoxSize.Location = new System.Drawing.Point(522, 412);
-            this.textBoxSize.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxSize.Name = "textBoxSize";
-            this.textBoxSize.Size = new System.Drawing.Size(180, 41);
-            this.textBoxSize.TabIndex = 23;
-            this.textBoxSize.TextChanged += new System.EventHandler(this.orderBez_TextChanged);
             // 
             // textBoxDiscount
             // 
@@ -427,31 +291,32 @@ namespace TestAddIn
             this.textBoxDiscount.Cursor = System.Windows.Forms.Cursors.IBeam;
             this.textBoxDiscount.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxDiscount.ForeColor = System.Drawing.Color.Lime;
-            this.textBoxDiscount.Location = new System.Drawing.Point(288, 553);
+            this.textBoxDiscount.Location = new System.Drawing.Point(288, 536);
             this.textBoxDiscount.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxDiscount.Name = "textBoxDiscount";
-            this.textBoxDiscount.Size = new System.Drawing.Size(143, 34);
+            this.textBoxDiscount.Size = new System.Drawing.Size(60, 34);
             this.textBoxDiscount.TabIndex = 22;
-            this.textBoxDiscount.Text = "% 0";
+            this.textBoxDiscount.Text = "0";
+            this.textBoxDiscount.TextChanged += new System.EventHandler(this.textBoxDiscount_TextChanged);
             // 
             // labelCountValue
             // 
             this.labelCountValue.AutoSize = true;
             this.labelCountValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold);
             this.labelCountValue.ForeColor = System.Drawing.Color.Lime;
-            this.labelCountValue.Location = new System.Drawing.Point(640, 552);
+            this.labelCountValue.Location = new System.Drawing.Point(682, 534);
             this.labelCountValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelCountValue.Name = "labelCountValue";
-            this.labelCountValue.Size = new System.Drawing.Size(105, 36);
+            this.labelCountValue.Size = new System.Drawing.Size(33, 36);
             this.labelCountValue.TabIndex = 21;
-            this.labelCountValue.Text = "€ 0.00";
+            this.labelCountValue.Text = "0";
             // 
             // labelSumValue
             // 
             this.labelSumValue.AutoSize = true;
             this.labelSumValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold);
             this.labelSumValue.ForeColor = System.Drawing.Color.Lime;
-            this.labelSumValue.Location = new System.Drawing.Point(1000, 552);
+            this.labelSumValue.Location = new System.Drawing.Point(963, 533);
             this.labelSumValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelSumValue.Name = "labelSumValue";
             this.labelSumValue.Size = new System.Drawing.Size(105, 36);
@@ -463,7 +328,7 @@ namespace TestAddIn
             this.labelSum.AutoSize = true;
             this.labelSum.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold);
             this.labelSum.ForeColor = System.Drawing.Color.Yellow;
-            this.labelSum.Location = new System.Drawing.Point(888, 552);
+            this.labelSum.Location = new System.Drawing.Point(872, 533);
             this.labelSum.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelSum.Name = "labelSum";
             this.labelSum.Size = new System.Drawing.Size(87, 36);
@@ -475,19 +340,19 @@ namespace TestAddIn
             this.labelCount.AutoSize = true;
             this.labelCount.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold);
             this.labelCount.ForeColor = System.Drawing.Color.Yellow;
-            this.labelCount.Location = new System.Drawing.Point(509, 552);
+            this.labelCount.Location = new System.Drawing.Point(551, 534);
             this.labelCount.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelCount.Name = "labelCount";
-            this.labelCount.Size = new System.Drawing.Size(109, 36);
+            this.labelCount.Size = new System.Drawing.Size(80, 36);
             this.labelCount.TabIndex = 18;
-            this.labelCount.Text = "Count:";
+            this.labelCount.Text = "Anz:";
             // 
             // labelRabbat
             // 
             this.labelRabbat.AutoSize = true;
             this.labelRabbat.Font = new System.Drawing.Font("Microsoft Sans Serif", 22F, System.Drawing.FontStyle.Bold);
             this.labelRabbat.ForeColor = System.Drawing.Color.Yellow;
-            this.labelRabbat.Location = new System.Drawing.Point(127, 552);
+            this.labelRabbat.Location = new System.Drawing.Point(111, 533);
             this.labelRabbat.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelRabbat.Name = "labelRabbat";
             this.labelRabbat.Size = new System.Drawing.Size(126, 36);
@@ -764,6 +629,43 @@ namespace TestAddIn
             this.footerLabel9.TabIndex = 8;
             this.footerLabel9.Text = "F5:";
             // 
+            // lastOrderAnz
+            // 
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.MediumBlue;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Yellow;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Lime;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
+            this.lastOrderAnz.DefaultCellStyle = dataGridViewCellStyle3;
+            this.lastOrderAnz.HeaderText = "Anz";
+            this.lastOrderAnz.MinimumWidth = 10;
+            this.lastOrderAnz.Name = "lastOrderAnz";
+            // 
+            // lastOrderNr
+            // 
+            this.lastOrderNr.HeaderText = "Nr.";
+            this.lastOrderNr.Name = "lastOrderNr";
+            // 
+            // lastOrderName
+            // 
+            this.lastOrderName.HeaderText = "Bez";
+            this.lastOrderName.Name = "lastOrderName";
+            // 
+            // lastOrderSize
+            // 
+            this.lastOrderSize.HeaderText = "S/J";
+            this.lastOrderSize.Name = "lastOrderSize";
+            // 
+            // lastOrderExtra
+            // 
+            this.lastOrderExtra.HeaderText = "Extra";
+            this.lastOrderExtra.Name = "lastOrderExtra";
+            // 
+            // lastOrderPrice
+            // 
+            this.lastOrderPrice.HeaderText = "Preis";
+            this.lastOrderPrice.Name = "lastOrderPrice";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -829,21 +731,14 @@ namespace TestAddIn
         private Label labelSumValue;
         private Label labelSum;
         private Label labelCount;
-        private TextBox textBoxSize;
-        private TextBox textBoxNr;
-        private TextBox textBox4;
-        private TextBox orderExtra;
-        private TextBox textBoxCount;
-        private TextBox textBoxName;
-        private TextBox textBoxExtra;
-        private DataGridViewTextBoxColumn lastOrderName;
+        private Label label1;
+        private Label labelLastDiscountValue;
+        private DataGridViewTextBoxColumn lastOrderAnz;
         private DataGridViewTextBoxColumn lastOrderNr;
+        private DataGridViewTextBoxColumn lastOrderName;
         private DataGridViewTextBoxColumn lastOrderSize;
         private DataGridViewTextBoxColumn lastOrderExtra;
-        private DataGridViewTextBoxColumn lastOrderDiscount;
         private DataGridViewTextBoxColumn lastOrderPrice;
-        private DataGridViewTextBoxColumn Rabatt;
-        private TextBox textBoxPrice;
     }
 
     public class CreateOrderForm : UserControl

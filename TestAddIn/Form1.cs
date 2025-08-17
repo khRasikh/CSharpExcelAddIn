@@ -8,10 +8,11 @@ using TestAddIn.orders;
 
 namespace TestAddIn
 {
- 
-public partial class Form1 : Form
+
+    public partial class Form1 : Form
     {
         private ListBox customerListBox;
+
         public Form1()
         {
             InitializeComponent();
@@ -46,13 +47,37 @@ public partial class Form1 : Form
             // Load orders file as a db
             OrdersManager.LoadOrders("orders.txt");
             LoadOrdersForCustomer(this.knr.Text);
-            textBoxName.KeyDown += OrderTextBox_KeyDown;
-            textBoxNr.KeyDown += OrderTextBox_KeyDown;
-            textBoxSize.KeyDown += OrderTextBox_KeyDown;
-            textBoxCount.KeyDown += OrderTextBox_KeyDown;
-            textBoxExtra.KeyDown += OrderTextBox_KeyDown;
-            textBoxPrice.KeyDown += OrderTextBox_KeyDown;
+            
+            // lastOrdersTable cell navigation 
+            /*override method used ProcessCmdKey*/
 
+            textBoxDiscount.KeyDown += OrderTextBox_KeyDown;
+        }
+
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (lastOrdersTable.Focused ||
+                (lastOrdersTable.EditingControl != null && lastOrdersTable.EditingControl.Focused))
+            {
+                if (keyData == Keys.Enter)
+                {
+                    // Show popup if you want
+                    //MessageBox.Show("Enter key pressed (navigating like Tab).", "Info");
+
+                    // Move to next cell (like Tab)
+                    SendKeys.Send("{TAB}");
+                    return true; // handled
+                }
+                else if (keyData == Keys.Tab)
+                {
+                    //MessageBox.Show("Tab key pressed.", "Info");
+                    // Let Tab behave normally
+                    return base.ProcessCmdKey(ref msg, keyData);
+                }
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void OrderTextBox_KeyDown(object sender, KeyEventArgs e)
@@ -63,30 +88,17 @@ public partial class Form1 : Form
 
                 Control current = (Control)sender;
 
-                if (current == textBoxName)
-                    textBoxNr.Focus();
-                else if (current == textBoxNr)
-                    textBoxSize.Focus();
-                else if (current == textBoxSize)
-                    textBoxCount.Focus();
-                else if (current == textBoxCount)
-                    textBoxExtra.Focus();
-                else if (current == textBoxExtra)
-                    textBoxPrice.Focus();
-                else if (current == textBoxPrice)
-                {
-                    // Last field - save the order
-                    SaveOrderToFile();
+                //calculate Sum and Count 
+                UpdateTotals();
 
-                    // Optionally clear fields or focus back to first field
-                    textBoxName.Focus();
+                if (current == textBoxDiscount)
+                {
+                    SaveTableOrdersToFile();
                 }
             }
         }
-
-        private void SaveOrderToFile()
+        private void SaveTableOrdersToFile()
         {
-            // Validate required fields
             if (string.IsNullOrWhiteSpace(knr.Text))
             {
                 MessageBox.Show("KNr is required.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -94,47 +106,41 @@ public partial class Form1 : Form
                 return;
             }
 
-
-            // Create order object (adjust based on your Order class structure)
-            var order = new Order
-            {
-                KNr = knr.Text.Trim(),
-                Name = textBoxName.Text.Trim(),
-                Nr = textBoxNr.Text.Trim(),
-                Size = textBoxSize.Text.Trim(),
-                Count = textBoxCount.Text.Trim(),
-                Extra = textBoxExtra.Text.Trim(),
-                Price = textBoxPrice.Text.Trim(),
-                Discount = "0" // Default value or get from another control
-            };
-
             try
             {
-                // Call your SaveOrder function from orders.cs
-                OrdersManager.SaveOrder(order, "orders.txt");
+                foreach (DataGridViewRow row in lastOrdersTable.Rows)
+                {
+                    if (row.IsNewRow) continue;
 
-                MessageBox.Show("Eine neue Bestellung wurde erfolgreich gespeichert.\r\n", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    // Map cells to match file format
+                    var order = new Order
+                    {
+                        KNr = knr.Text.Trim(),
+                        Anz = row.Cells[0].Value?.ToString()?.Trim() ?? "",
+                        Nr = row.Cells[1].Value?.ToString()?.Trim() ?? "",
+                        Bez = row.Cells[2].Value?.ToString()?.Trim() ?? "",
+                        Size = row.Cells[3].Value?.ToString()?.Trim() ?? "",
+                        Extra = row.Cells[4].Value?.ToString()?.Trim() ?? "",
+                        Price = row.Cells[5].Value?.ToString()?.Trim() ?? "",
+                        Rabbat = this.textBoxDiscount.Text.Trim()
+                    };
 
-                // Clear fields after saving
-                textBoxName.Text = "";
-                textBoxNr.Text = "";
-                textBoxSize.Text = "";
-                textBoxCount.Text = "";
-                textBoxExtra.Text = "";
-                textBoxPrice.Text = "";
-                textBoxDiscount.Text = "";
 
-                // Refresh orders display if needed
+                    OrdersManager.SaveOrder(order, "orders.txt");
+                }
+
+                MessageBox.Show("Alle Bestellungen aus der Tabelle wurden erfolgreich gespeichert.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                 LoadOrdersForCustomer(knr.Text);
-
-                // Focus back to first field
-                textBoxName.Focus();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving order: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error saving table orders: {ex.Message}\n\n{ex.StackTrace}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+
+
         private void LoadOrdersForCustomer(string customerId)
         {
             var filteredOrders = OrdersManager
@@ -142,12 +148,14 @@ public partial class Form1 : Form
                 .Where(o => o.KNr.Trim() == customerId.Trim())
                 .ToList();
 
-            lastOrdersTable.Rows.Clear(); // Assuming you are manually adding rows
+            lastOrdersTable.Rows.Clear(); 
 
             foreach (var order in filteredOrders)
             {
-                lastOrdersTable.Rows.Add(order.Name, order.Nr, order.Size, order.Count, order.Extra, order.Price, order.Discount);
+                lastOrdersTable.Rows.Add(order.Anz, order.Nr, order.Size, order.Bez, order.Extra, order.Price, order.Rabbat);
             }
+
+            UpdateTotals();
         }
 
 
@@ -304,7 +312,8 @@ public partial class Form1 : Form
                         {
                             existingLines[i] = line; // update the existing record
                             File.WriteAllLines(path, existingLines); // save changes
-                            textBoxName.Focus();
+                            //focus on the first cell of lastOrdersTable 
+                            OrdersManager.FocusCursorOnAnz(lastOrdersTable);
                             return;
                         }
                     }
@@ -318,7 +327,7 @@ public partial class Form1 : Form
                  * update the last order table by calling 
                  * move cursor on the first input box of CreateOrderForm
                  */
-                textBoxName.Focus();
+                OrdersManager.FocusCursorOnAnz(lastOrdersTable);
 
             }
             catch (Exception ex)
@@ -595,6 +604,58 @@ public partial class Form1 : Form
         }
 
         private void orderBez_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UpdateTotals()
+        {
+            try
+            {
+                int totalCount = 0;
+                decimal totalSum = 0;
+                int lastDiscountPercentage = 0;
+                decimal lastTotalDiscountValue = 0;
+
+                foreach (DataGridViewRow row in lastOrdersTable.Rows)
+                {
+                    if (row.IsNewRow) continue;
+
+                    // Calculate totalCount (Anz)
+                    if (int.TryParse(row.Cells[0].Value?.ToString(), out int anz))
+                    {
+                        totalCount += anz;
+                    }
+
+                    // Calculate totalSum (Price + Extra)
+                    decimal price = 0;
+                    decimal extra = 0;
+
+                    decimal.TryParse(row.Cells[5].Value?.ToString(), out price);
+                    decimal.TryParse(row.Cells[4].Value?.ToString(), out extra);
+                    
+
+                    totalSum += price + extra;
+
+                    // Keep track of last discount
+                    lastDiscountPercentage = 0;
+                }
+
+                // Calculate discount amount based on last discount %
+                lastTotalDiscountValue = totalSum * lastDiscountPercentage / 100;
+
+                // Update labels
+                labelCountValue.Text = totalCount.ToString();
+                labelSumValue.Text = "€" + totalSum.ToString("F2");
+                labelLastDiscountValue.Text = "(- €" + OrdersManager.GetLastDiscount(this.search.Text, "orders.txt") + ")";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error calculating totals: " + ex.Message);
+            }
+        }
+
+        private void textBoxDiscount_TextChanged(object sender, EventArgs e)
         {
 
         }
