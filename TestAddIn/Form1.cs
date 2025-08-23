@@ -1,10 +1,18 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using TestAddIn.article;
 using TestAddIn.customer;
+using TestAddIn.extras;
 using TestAddIn.orders;
+using TestAddIn.shared;
 
 namespace TestAddIn
 {
@@ -12,6 +20,10 @@ namespace TestAddIn
     public partial class Form1 : Form
     {
         private ListBox customerListBox;
+        private Tools tools;
+        private List<Article> articles;
+        private List<Extras> extras = new List<Extras>();
+        private ListBox searchListBox;
 
         public Form1()
         {
@@ -52,33 +64,397 @@ namespace TestAddIn
             /*override method used ProcessCmdKey*/
 
             textBoxDiscount.KeyDown += OrderTextBox_KeyDown;
+
+            // focus cursor on search box when form loads
+            this.Load += (s, e) => search.Focus();
+
+            // beam cursor default custom size
+            tools = new Tools();
+            tools.HookAllTextBoxes(this.Controls);
+            // Custom beam for cells in lastORdersTable 
+            lastOrdersTable.EditingControlShowing += LastOrdersTable_EditingControlShowing;
+
+            // Handle cell edit end to auto-fill "Bez" based on "Nr"
+            articles = Article.LoadArticles("article.json");
+            lastOrdersTable.CellValueChanged += lastOrdersTable_CellValueChanged;
+
+            //handle extra list 
+            ExtrasManager.LoadExtras("extra.json");
+
+            //top header
+            Timer timer = new Timer();
+            timer.Interval = 1000; // 1 second
+            timer.Tick += Timer_Tick;
+            timer.Start();
+
+            labelPRValue.Text = "1";
+
+            //popup
+            searchListBox = new ListBox();
+            searchListBox.Visible = false;
+            searchListBox.Height = 200;
+            searchListBox.Width = search.Width;
+            searchListBox.Left = search.Left;
+            searchListBox.Top = search.Bottom;
+            searchListBox.Font = new Font("Segoe UI", 10);
+            searchListBox.BringToFront();
+            this.Controls.Add(searchListBox);
+
+            // Event handlers
+            searchListBox.KeyDown += SearchListBox_KeyDown;
+            searchListBox.Click += SearchListBox_Click;
+
+        }
+
+        private void SearchListBox_Click(object sender, EventArgs e)
+        {
+            SelectCustomerFromPopup();
+        }
+         
+
+        private void SelectCustomerFromPopup()
+        {
+            if (searchListBox.SelectedIndex >= 0 && searchListBox.Tag is List<Customer> matches)
+            {
+                var selectedCustomer = matches[searchListBox.SelectedIndex];
+                PopulateCustomerFields(selectedCustomer);
+
+                searchListBox.Visible = false;
+                this.lastOrdersTable.Focus();
+            }
+        }
+        private void PopulateCustomerFields(Customer found)
+        {
+            knr.Text = found.KNr;
+            name.Text = found.Name;
+            phone.Text = found.Tel;
+            str.Text = found.Str;
+            ort.Text = found.Ort;
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            labelDate.Text = DateTime.Now.ToString("dd.MM.yyyy    HH:mm:ss");
+        }
+
+        private void LastOrdersTable_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            if (lastOrdersTable.IsCurrentCellDirty)
+                lastOrdersTable.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        }
+
+        private void lastOrdersTable_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            var dgv = sender as DataGridView;
+            var editedCell = dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            string articlID = editedCell.Value?.ToString() ?? "";
+
+            if (dgv.Columns[e.ColumnIndex].Name == "lastOrderNr")
+            {
+                var bezCell = dgv.Rows[e.RowIndex].Cells["lastOrderName"];
+                var article = articles.FirstOrDefault(a => a.CompNum == articlID);
+                if (article != null)
+                    bezCell.Value = article.Name;
+                else
+                    bezCell.Value = "";
+
+                // Move focus to lastOrderSize
+                dgv.CurrentCell = dgv.Rows[e.RowIndex].Cells["lastOrderSize"];
+                dgv.BeginEdit(true);
+            }
         }
 
 
+        private void LastOrdersTable_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0) return;
+
+            var dgv = sender as DataGridView;
+            var editedCell = dgv.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            string articlID = editedCell.Value?.ToString() ?? "";
+
+            if (dgv.Columns[e.ColumnIndex].Name == "lastOrderNr")
+            {
+                var bezCell = dgv.Rows[e.RowIndex].Cells["lastOrderName"];
+                if (bezCell != null)
+                {
+                    // Lookup in JSON
+                    var article = articles.FirstOrDefault(a => a.CompNum == articlID);
+                    if (article != null)
+                        bezCell.Value = article.Name;
+                    else
+                        bezCell.Value = "";
+
+                    // Move focus to lastOrderSize
+                    dgv.CurrentCell = dgv.Rows[e.RowIndex].Cells["lastOrderSize"];
+                    dgv.BeginEdit(true);
+                }
+            }
+        }
+
+        private void LastOrderSize_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (lastOrdersTable.CurrentCell == null) return;
+
+            var dgv = lastOrdersTable;
+            int rowIndex = dgv.CurrentCell.RowIndex;
+
+            var anzCell = dgv.Rows[rowIndex].Cells["lastOrderAnz"];
+            var nrCell = dgv.Rows[rowIndex].Cells["lastOrderNr"];
+            var priceCell = dgv.Rows[rowIndex].Cells["lastOrderPrice"];
+            var sizeCell = dgv.Rows[rowIndex].Cells["lastOrderSize"];
+
+            string articlID = nrCell.Value?.ToString() ?? "";
+            var article = articles.FirstOrDefault(a => a.CompNum == articlID);
+
+            if (article == null) return;
+
+            switch (char.ToUpper(e.KeyChar))
+            {
+                case 'S':
+                    priceCell.Value = Convert.ToDecimal(article.SinglPreis) * Convert.ToDecimal(anzCell.Value);
+                    break;
+                case 'J':
+                    priceCell.Value = Convert.ToDecimal(article.JumboPreis) * Convert.ToDecimal(anzCell.Value); 
+                    break;
+                case 'F':
+                    priceCell.Value = Convert.ToDecimal(article.FamilyPreis) * Convert.ToDecimal(anzCell.Value);
+                    break;
+                case 'P':
+                    priceCell.Value = Convert.ToDecimal(article.PartyPreis) * Convert.ToDecimal(anzCell.Value);
+                    break;
+                default:
+                    break;
+            }
+        }
+         
+
+        private void LastOrdersTable_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            if (e.Control is TextBox tb)
+            {
+                // --- Existing GotFocus handler ---
+                tb.GotFocus -= Tb_GotFocus;
+                tb.GotFocus += Tb_GotFocus;
+
+                // --- Add KeyPress handlers for size and extra ---
+                int colIndex = lastOrdersTable.CurrentCell.ColumnIndex;
+                string colName = lastOrdersTable.Columns[colIndex].Name;
+
+                // Remove previous KeyPress handlers
+                tb.KeyPress -= LastOrderSize_KeyPress;
+
+                if (colName == "lastOrderSize")
+                {
+                    tb.KeyPress += LastOrderSize_KeyPress;
+                    tb.TextChanged += LastOrderSize_TextChanged;
+                }
+                else if (colName == "lastOrderExtra") //TODO: update extra
+                                                      //tb.KeyPress += LastOrderExtra_KeyPress;
+                {
+                    //
+                    // MessageBox.Show("KNr is required." + colName, "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                UpdateTotals();
+            }
+        }
+
+        private void LastOrderSize_TextChanged(object sender, EventArgs e)
+        {
+            if (!(sender is TextBox tb)) return;
+
+            // Only enforce uppercase / single letter if current cell is lastOrderSize
+            if (lastOrdersTable.CurrentCell?.OwningColumn.Name != "lastOrderSize")
+                return;
+
+            if (!string.IsNullOrEmpty(tb.Text))
+                tb.Text = tb.Text.Substring(0, 1).ToUpper();
+
+            tb.SelectionStart = tb.Text.Length;
+            tb.SelectionLength = 0;
+        }
+
+        private void Tb_GotFocus(object sender, EventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                tools.ApplyCustomCaret(tb);
+            }
+        }
+
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (lastOrdersTable.Focused ||
-                (lastOrdersTable.EditingControl != null && lastOrdersTable.EditingControl.Focused))
-            {
-                if (keyData == Keys.Enter)
-                {
-                    // Show popup if you want
-                    //MessageBox.Show("Enter key pressed (navigating like Tab).", "Info");
+            var dgv = lastOrdersTable;
 
-                    // Move to next cell (like Tab)
-                    SendKeys.Send("{TAB}");
-                    return true; // handled
-                }
-                else if (keyData == Keys.Tab)
+            bool gridHasFocus =
+                dgv != null &&
+                (dgv.Focused || (dgv.EditingControl != null && dgv.EditingControl.Focused));
+
+            if (!gridHasFocus)
+                return base.ProcessCmdKey(ref msg, keyData);
+
+            var key = keyData & Keys.KeyCode;
+
+            if (key == Keys.Enter)
+            {
+                if (dgv.CurrentCell == null) return true;
+
+                int curCol = dgv.CurrentCell.ColumnIndex;
+                int curRow = dgv.CurrentCell.RowIndex;
+
+                // Get column indexes safely
+                int colLastOrderNr = dgv.Columns.Contains("lastOrderNr") ? dgv.Columns["lastOrderNr"].Index : -1;
+                int colLastOrderBez = dgv.Columns.Contains("lastOrderBez") ? dgv.Columns["lastOrderBez"].Index : -1;
+                int colLastOrderSize = dgv.Columns.Contains("lastOrderSize") ? dgv.Columns["lastOrderSize"].Index : -1;
+                int colLastOrderExtra = dgv.Columns.Contains("LastOrderExtra") ? dgv.Columns["LastOrderExtra"].Index : dgv.Columns.Count - 1;
+
+                // --- Case 1: Enter on lastOrderNr ---
+                if (curCol == colLastOrderNr)
                 {
-                    //MessageBox.Show("Tab key pressed.", "Info");
-                    // Let Tab behave normally
-                    return base.ProcessCmdKey(ref msg, keyData);
+                    dgv.EndEdit();
+                    dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
+
+                    string articlID = dgv.Rows[curRow].Cells["lastOrderNr"].Value?.ToString()?.Trim() ?? "";
+                    var article = articles.FirstOrDefault(a => a.CompNum == articlID);
+
+                    if (article != null)
+                    {
+                        dgv.Rows[curRow].Cells["lastOrderName"].Value = article.Name;
+                        dgv.CurrentCell = dgv.Rows[curRow].Cells["lastOrderSize"];
+                    }
+                    else
+                    {
+                        dgv.Rows[curRow].Cells["lastOrderName"].Value = "";
+                        MessageBox.Show("Artikel nicht gefunden. Bitte prüfen!", "Fehler", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        dgv.CurrentCell = dgv.Rows[curRow].Cells["lastOrderNr"];
+                    }
+
+                    dgv.BeginEdit(true);
+                    return true;
                 }
+
+                // --- Case 2: Enter on LastOrderExtra ---
+                // TODO: extra update
+                if (curCol == colLastOrderExtra)
+                {
+                    dgv.EndEdit();
+                    dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
+
+                    // Get entered value from LastOrderExtra cell
+                    string extraInput = dgv.Rows[curRow].Cells[colLastOrderExtra].Value?.ToString()?.Trim();
+                    string sizeText = dgv.Rows[curRow].Cells["lastOrderSize"].Value?.ToString()?.Trim();
+                    char sizeCode = 'S';
+                    if (!string.IsNullOrEmpty(sizeText))
+                        sizeCode = char.ToUpper(sizeText[0]);
+                    //    MessageBox.Show("Extra value:" + extraInput + "SizeCode:"+ sizeCode, "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    if (!string.IsNullOrEmpty(extraInput))
+                    {
+                        // Try to parse extra ID
+                        if (int.TryParse(extraInput, out int extraId))
+                        {
+                            var extraItem = TestAddIn.extras.ExtrasManager.GetExtraByIdCode(extraId, sizeCode);
+
+                            if (extraItem != null)
+                            {
+                                // Check if this extra already exists in the list
+                                var existingExtra = extras.FirstOrDefault(e => e.Id == extraItem.Id);
+
+                                if (existingExtra == null)
+                                {
+                                    // Add new extra item
+                                    extras.Add(extraItem);
+                                }
+                                
+                            }
+                            else
+                            {
+                                MessageBox.Show(
+                                    "Extra ID not found! (ID: " + extraId + ")",
+                                    "Validation Error",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning
+                                );
+                            }
+                        }
+                        else
+                        {
+                            // Invalid input → reset
+                            dgv.Rows[curRow].Cells["LastOrderExtra"].Value = 0;
+                            MessageBox.Show("Invalid Extra ID!", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                    }
+                    else
+                    {
+                        // Empty input → reset
+                        dgv.Rows[curRow].Cells["LastOrderExtra"].Value = 0;
+                        dgv.Rows[curRow].Cells["LastOrderExtraName"].Value = "";
+                    }
+
+
+                    // Move to next row, first column
+                    int nextRow = curRow + 1;
+                    int firstColIndex = 0;
+
+                    if (nextRow >= dgv.Rows.Count - 1 && dgv.AllowUserToAddRows)
+                        dgv.CurrentCell = dgv.Rows[dgv.NewRowIndex].Cells[firstColIndex];
+                    else
+                        dgv.CurrentCell = dgv.Rows[nextRow].Cells[firstColIndex];
+
+                    dgv.BeginEdit(true);
+                    return true;
+                }
+                // --- Case 3: Other columns → Enter acts like Tab ---
+                SendKeys.Send("{TAB}");
+                return true;
+            }
+            else if (key == Keys.F6)
+            {
+                this.textBoxDiscount.Focus(); 
+                return true;
+            }
+            else if (key == Keys.F2)
+            {
+                dgv.Rows.Clear();
+                extras.Clear();
+                this.search.Focus();
+            }
+            else if (key == Keys.F3)
+            {
+                dgv.Rows.Clear();
+                extras.Clear();
+                this.name.Focus();
+            }
+            else if (key == Keys.Tab)
+            {
+                return base.ProcessCmdKey(ref msg, keyData);
+            }
+            else if (key == Keys.F1)
+            {
+                // Clear all rows
+                dgv.Rows.Clear();
+                extras.Clear();
+
+                // Ensure at least one row exists
+                if (!dgv.AllowUserToAddRows || dgv.Rows.Count == 0)
+                    dgv.Rows.Add();
+
+                // Focus on the "Anz" column (or first column if missing)
+                int anzIndex = dgv.Columns.Contains("Anz") ? dgv.Columns["Anz"].Index : 0;
+                int targetRowIndex = dgv.Rows.Count - 1; // last row (or the newly added one)
+
+                // Set the current cell and begin edit immediately
+                dgv.CurrentCell = dgv.Rows[targetRowIndex].Cells[anzIndex];
+                dgv.BeginEdit(true);
+
+                return true; // handled
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
         }
+
 
         private void OrderTextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -108,11 +484,12 @@ namespace TestAddIn
 
             try
             {
+                var ordersForKnr = new List<Order>();
+
                 foreach (DataGridViewRow row in lastOrdersTable.Rows)
                 {
                     if (row.IsNewRow) continue;
 
-                    // Map cells to match file format
                     var order = new Order
                     {
                         KNr = knr.Text.Trim(),
@@ -125,21 +502,43 @@ namespace TestAddIn
                         Rabbat = this.textBoxDiscount.Text.Trim()
                     };
 
-
-                    OrdersManager.SaveOrder(order, "orders.txt");
+                    ordersForKnr.Add(order);
                 }
 
-                MessageBox.Show("Alle Bestellungen aus der Tabelle wurden erfolgreich gespeichert.", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // 👉 einmal speichern mit allen Orders für diese KNr
+                OrdersManager.SaveOrders("orders.txt", knr.Text, ordersForKnr);
+
+                MessageBox.Show("Alle Bestellungen aus der Tabelle wurden erfolgreich gespeichert.",
+                                "Success",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
 
                 LoadOrdersForCustomer(knr.Text);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving table orders: {ex.Message}\n\n{ex.StackTrace}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error saving table orders: {ex.Message}\n\n{ex.StackTrace}",
+                                "Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
         }
 
 
+        private void SearchListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                SelectCustomerFromPopup();
+                e.Handled = true; // optional
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                searchListBox.Visible = false; // hide the popup
+                e.Handled = true;
+                this.search.Focus();
+            }
+        }
 
         private void LoadOrdersForCustomer(string customerId)
         {
@@ -152,47 +551,61 @@ namespace TestAddIn
 
             foreach (var order in filteredOrders)
             {
-                lastOrdersTable.Rows.Add(order.Anz, order.Nr, order.Size, order.Bez, order.Extra, order.Price, order.Rabbat);
+                lastOrdersTable.Rows.Add(order.Anz, order.Nr, order.Bez, order.Size, order.Extra, order.Price, order.Rabbat);
             }
 
             UpdateTotals();
         }
 
+        private string GetStreetNumber(string street)
+        {
+            if (string.IsNullOrWhiteSpace(street))
+                return "";
+
+            // Extract first number found in the street string
+            var match = System.Text.RegularExpressions.Regex.Match(street, @"\d+");
+            return match.Success ? match.Value : "";
+        }
+
+        private string GetStreetName(string street)
+        {
+            if (string.IsNullOrWhiteSpace(street))
+                return "";
+
+            // Remove the street number part
+            return System.Text.RegularExpressions.Regex.Replace(street, @"\d+", "").Trim();
+        }
 
         private void search_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
                 var input = search.Text.Trim();
+                if (string.IsNullOrEmpty(input)) return;
 
-                if (!string.IsNullOrEmpty(input))
+                // Check if the input is numeric → treat it as KNr
+                if (int.TryParse(input, out _))
                 {
-                    // Try to find customer
+                    // Get last discount
+                    int lastDiscountPercentage = OrdersManager.GetLastDiscount(search.Text, "orders.txt");
+                    textBoxDiscount.Text = lastDiscountPercentage.ToString() ?? "0";
+
                     var found = Customer.FindByKNr(input);
 
                     if (found != null)
                     {
-                        // Customer found - populate fields
-                        knr.Text = found.KNr;
-                        name.Text = found.Name;
-                        phone.Text = found.Tel;
-                        str.Text = found.Str;
-                        ort.Text = found.Ort;
-                        // focus cursor on Str if there is a list of streets popup 
-                        if(found.Str != "" ) {
-                            str.Focus();
-                        }
+                        PopulateCustomerFields(found);
+                        this.lastOrdersTable.Focus();
+                        return;
                     }
                     else
                     {
-                        // Customer not found - clear fields
                         knr.Text = string.Empty;
                         name.Text = string.Empty;
                         phone.Text = string.Empty;
                         str.Text = string.Empty;
                         ort.Text = string.Empty;
 
-                        // Ask user if they want to create a new customer
                         var result = MessageBox.Show("Customer not found. Do you want to create a new customer?",
                                                      "Create Customer",
                                                      MessageBoxButtons.YesNo,
@@ -200,29 +613,83 @@ namespace TestAddIn
 
                         if (result == DialogResult.Yes)
                         {
-                            var allCustomers = Customer.GetAll(); // Assumes you have this method
-                            int maxKnr = 0;
+                            var allCustomers = Customer.GetAll();
+                            int maxKnr = allCustomers
+                                .Select(c => int.TryParse(c.KNr, out int num) ? num : 0)
+                                .DefaultIfEmpty(0)
+                                .Max();
 
-                            foreach (var cust in allCustomers)
-                            {
-                                if (int.TryParse(cust.KNr, out int parsedKnr))
-                                {
-                                    if (parsedKnr > maxKnr)
-                                        maxKnr = parsedKnr;
-                                }
-                            }
-
-                            int newKnr = maxKnr + 1;
                             knr.ReadOnly = true;
-                            knr.Text = newKnr.ToString();
-
-                            // Focus the name field so user can begin entry
+                            knr.Text = (maxKnr + 1).ToString();
                             name.Focus();
                         }
+                        return;
+                    }
+                }
+                else
+                {
+                    // Non-numeric → search by address
+                    var matches = Customer.GetByAddress(input);
+
+                    searchListBox.Items.Clear();
+                    searchListBox.Visible = false;
+
+                    if (matches.Count > 0)
+                    {
+                        searchListBox.Items.Clear();
+
+                        // Add header first
+                        searchListBox.Items.Add(
+                            string.Format("{0,-5} {1,-15} {2,-20} {3,-25} {4,-15}",
+                                "NO", "Str.No", "Name", "Str", "Tel")
+                        );
+                        searchListBox.Items.Add(new string('-', 85)); // separator line
+
+                        int index = 1;
+                        foreach (var customer in matches)
+                        {
+                            // Split street into number + name
+                            string streetNumber = GetStreetNumber(customer.Str);
+                            string streetName = GetStreetName(customer.Str);
+
+                            searchListBox.Items.Add(
+                                string.Format("{0,-5} {1,-6} {2,-15} {3,-20} {4,-10}",
+                                    index,
+                                    streetNumber,
+                                    customer.Name,
+                                    streetName,
+                                    customer.Tel
+                                )
+                            );
+                            index++;
+                        }
+
+                        searchListBox.Tag = matches; // Store matches for later selection
+                        searchListBox.ItemHeight = 32; // Adjust row height for padding effect
+                        searchListBox.BackColor = Color.Black;
+                        searchListBox.ForeColor = Color.White;
+                        searchListBox.BorderStyle = BorderStyle.FixedSingle;
+                        searchListBox.Width = 1000; // Wider for readability
+                        searchListBox.Height = Math.Min(400, matches.Count * searchListBox.ItemHeight + 8); // Add some padding
+                        searchListBox.Font = new Font(FontFamily.GenericMonospace, 16, FontStyle.Regular);
+
+
+                        // Center on the screen
+                        searchListBox.Left = (this.ClientSize.Width - searchListBox.Width) / 2;
+                        searchListBox.Top = (this.ClientSize.Height - searchListBox.Height) / 2;
+
+                        searchListBox.BringToFront();
+                        searchListBox.Visible = true;
+                        searchListBox.Focus();
+                    }
+                    else
+                    {
+                        MessageBox.Show("No matching addresses found.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
         }
+
 
         private void Input_KeyDown(object sender, KeyEventArgs e)
         {
@@ -334,23 +801,6 @@ namespace TestAddIn
             {
                 MessageBox.Show($"Error saving customer: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-
-        /*customize cursor focus*/
-        [DllImport("user32.dll")]
-        private static extern bool CreateCaret(IntPtr hWnd, IntPtr hBitmap, int nWidth, int nHeight);
-
-        [DllImport("user32.dll")]
-        private static extern bool ShowCaret(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        private static extern bool SetCaretPos(int x, int y);
-
-        private void search_GotFocus(object sender, EventArgs e)
-        {
-            CreateCaret(search.Handle, IntPtr.Zero, 4, search.Font.Height);
-            ShowCaret(search.Handle);
         }
 
 
@@ -614,40 +1064,40 @@ namespace TestAddIn
             {
                 int totalCount = 0;
                 decimal totalSum = 0;
-                int lastDiscountPercentage = 0;
+                decimal totalExtra = 0;
                 decimal lastTotalDiscountValue = 0;
+
+                // Get discount from TextBox (user can change it)
+                int lastDiscountPercentage = 0;
+                int.TryParse(textBoxDiscount.Text.Trim(), out lastDiscountPercentage);
 
                 foreach (DataGridViewRow row in lastOrdersTable.Rows)
                 {
                     if (row.IsNewRow) continue;
 
-                    // Calculate totalCount (Anz)
-                    if (int.TryParse(row.Cells[0].Value?.ToString(), out int anz))
-                    {
+                    // totalCount
+                    if (int.TryParse(row.Cells["lastOrderAnz"].Value?.ToString(), out int anz))
                         totalCount += anz;
-                    }
 
-                    // Calculate totalSum (Price + Extra)
+                    // totalSum and extra
                     decimal price = 0;
-                    decimal extra = 0;
+                    decimal.TryParse(row.Cells["lastOrderPrice"].Value?.ToString(), out price);
 
-                    decimal.TryParse(row.Cells[5].Value?.ToString(), out price);
-                    decimal.TryParse(row.Cells[4].Value?.ToString(), out extra);
-                    
-
-                    totalSum += price + extra;
-
-                    // Keep track of last discount
-                    lastDiscountPercentage = 0;
+                    totalSum += price;
                 }
 
-                // Calculate discount amount based on last discount %
-                lastTotalDiscountValue = totalSum * lastDiscountPercentage / 100;
+                if (extras.Count > 0)
+                {
+                    totalExtra = extras.Sum(e => e.Price);
+                }
+
+                // Calculate discount amount
+                lastTotalDiscountValue = ((totalSum + totalExtra) * lastDiscountPercentage) / 100;
 
                 // Update labels
                 labelCountValue.Text = totalCount.ToString();
-                labelSumValue.Text = "€" + totalSum.ToString("F2");
-                labelLastDiscountValue.Text = "(- €" + OrdersManager.GetLastDiscount(this.search.Text, "orders.txt") + ")";
+                labelSumValue.Text = "€" + ((totalSum + totalExtra) - lastTotalDiscountValue).ToString("F2");
+                labelLastDiscountValue.Text = $"(- €{lastTotalDiscountValue:F2})";
             }
             catch (Exception ex)
             {
@@ -657,7 +1107,7 @@ namespace TestAddIn
 
         private void textBoxDiscount_TextChanged(object sender, EventArgs e)
         {
-
+            UpdateTotals();
         }
     }
 }

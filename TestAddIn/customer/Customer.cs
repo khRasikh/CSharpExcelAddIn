@@ -72,6 +72,16 @@ namespace TestAddIn.customer
             return customers.Find(c => c.KNr == knr.Trim());
         }
 
+        public static List<Customer> GetByAddress(string keyword)
+        {
+            var customers = GetAll();
+            return customers
+                .Where(c =>
+                    (!string.IsNullOrEmpty(c.Str) && c.Str.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                    (!string.IsNullOrEmpty(c.Ort) && c.Ort.IndexOf(keyword, StringComparison.OrdinalIgnoreCase) >= 0))
+                .ToList();
+        }
+
 
         public static List<Customer> GetAll()
         {

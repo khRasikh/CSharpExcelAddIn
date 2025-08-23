@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using static System.Windows.Forms.LinkLabel;
 
 namespace TestAddIn.orders
 {
@@ -54,8 +53,8 @@ namespace TestAddIn.orders
                             KNr = columns[0],
                             Anz = columns[1],
                             Nr = columns[2],
-                            Size = columns[3],
-                            Bez = columns[4],
+                            Bez = columns[3],
+                            Size = columns[4].ToUpper(),
                             Extra = columns[5].Replace("€", "").Trim(),
                             Price = columns[6].Replace("€", "").Trim(),
                             Rabbat = columns[7].Replace("%", "").Trim()
@@ -76,45 +75,96 @@ namespace TestAddIn.orders
         }
 
 
-        public static void SaveOrder(Order order, string filePath)
+        public static void SaveOrders(string filePath, string knr, IEnumerable<Order> ordersForKnr)
         {
-            if (string.IsNullOrWhiteSpace(order.KNr) || string.IsNullOrWhiteSpace(order.Rabbat))
+            if (string.IsNullOrWhiteSpace(knr))
             {
-                MessageBox.Show("All fields must be filled out before saving.");
+                MessageBox.Show("KNr darf nicht leer sein.");
+                return;
+            }
+
+            var list = (ordersForKnr ?? Enumerable.Empty<Order>()).ToList();
+            if (list.Count == 0)
+            {
+                MessageBox.Show("Keine Bestellungen zum Speichern vorhanden.");
+                return;
+            }
+
+            if (list.Any(o => !string.Equals(o.KNr, knr, StringComparison.Ordinal)))
+            {
+                MessageBox.Show("Alle Bestellzeilen müssen die gleiche KNr besitzen.");
+                return;
+            }
+
+            if (list.Any(o => string.IsNullOrWhiteSpace(o.Rabbat)))
+            {
+                MessageBox.Show("Rabbat darf nicht leer sein.");
                 return;
             }
 
             try
             {
-                List<string> lines = new List<string>();
-                if (File.Exists(filePath))
-                {
-                    // Read all lines and remove any line with the same KNr
-                    lines = File.ReadAllLines(filePath)
-                                .Where(l => !l.StartsWith(order.KNr + "\t"))
-                                .ToList();
-                }
+                // Datei laden und ALLE bisherigen Zeilen dieser KNr entfernen (robust über Spaltenvergleich)
+                var lines = File.Exists(filePath)
+                    ? File.ReadAllLines(filePath)
+                          .Where(l =>
+                          {
+                              if (string.IsNullOrWhiteSpace(l)) return false; // leere raus
+                              var cols = l.Split('\t');
+                              if (cols.Length == 0) return true;
+                              var firstCol = cols[0].Trim();
+                              return !string.Equals(firstCol, knr, StringComparison.Ordinal);
+                          })
+                          .ToList()
+                    : new List<string>();
 
-                // Add the new order
-                string newLine = $"{order.KNr}\t{order.Anz}\t{order.Nr}\t{order.Size}\t{order.Bez}\t{order.Extra}\t{order.Price}\t{order.Rabbat}";
-                lines.Add(newLine);
+                // Neue Zeilen anhängen (eine oder mehrere)
+                foreach (var o in list)
+                    lines.Add(ToLine(o));
 
-                // Overwrite the file with the updated list
+                // Datei überschreiben
                 File.WriteAllLines(filePath, lines);
 
-                // Update in-memory list
-                orders.RemoveAll(o => o.KNr == order.KNr);
-                orders.Add(order);
+                // In-Memory aktualisieren
+                orders.RemoveAll(o => string.Equals(o.KNr, knr, StringComparison.Ordinal));
+                orders.AddRange(list);
 
-                MessageBox.Show("Die Bestellung wurde erfolgreich gespeichert oder aktualisiert.");
+                MessageBox.Show("Die Bestellung(en) wurden erfolgreich gespeichert/ersetzt.");
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error saving order: " + ex.Message);
+                MessageBox.Show("Fehler beim Speichern: " + ex.Message);
             }
         }
 
+        // Komfort-Overload: Einzelzeile -> ersetzt alle Zeilen dieser KNr durch genau diese eine
+        public static void SaveOrder(string filePath, Order order)
+        {
+            if (order == null)
+            {
+                MessageBox.Show("Order ist null.");
+                return;
+            }
+            SaveOrders(filePath, order.KNr, new[] { order });
+        }
 
+        private static string ToLine(Order o)
+        {
+            string S(string s) => (s ?? "").Replace("\t", " "); // Tabs entschärfen
+            string N(object n) => n?.ToString() ?? "";
+
+            return string.Join("\t", new[]
+            {
+            S(o.KNr),
+            N(o.Anz),
+            N(o.Nr),
+            S(o.Bez),
+            S(o.Size),
+            S(o.Extra),
+            S(o.Price),
+            S(o.Rabbat)
+        });
+        }
         public static void FocusCursorOnAnz(DataGridView lastOrdersTable)
         {
             if (lastOrdersTable.Rows.Count > 0)
@@ -130,9 +180,9 @@ namespace TestAddIn.orders
             }
         }
 
-        public static decimal GetLastDiscount(string KNr, string filePath)
+        public static int GetLastDiscount(string KNr, string filePath)
         {
-            decimal discount = 0;
+            int discount = 0;
 
             if (!File.Exists(filePath))
             {
@@ -160,7 +210,7 @@ namespace TestAddIn.orders
 
                         if (rowKNr == KNr && !string.IsNullOrWhiteSpace(rabbatStr))
                         {
-                            decimal.TryParse(rabbatStr, out discount);
+                            int.TryParse(rabbatStr, out discount);
                             break; // Found the first match, exit
                         }
                     }
