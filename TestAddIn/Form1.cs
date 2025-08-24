@@ -306,13 +306,30 @@ namespace TestAddIn
                 int curRow = dgv.CurrentCell.RowIndex;
 
                 // Get column indexes safely
+                int colLastOrderAnz = dgv.Columns.Contains("lastOrderAnz") ? dgv.Columns["lastOrderAnz"].Index : -1;
                 int colLastOrderNr = dgv.Columns.Contains("lastOrderNr") ? dgv.Columns["lastOrderNr"].Index : -1;
                 int colLastOrderBez = dgv.Columns.Contains("lastOrderBez") ? dgv.Columns["lastOrderBez"].Index : -1;
                 int colLastOrderSize = dgv.Columns.Contains("lastOrderSize") ? dgv.Columns["lastOrderSize"].Index : -1;
                 int colLastOrderExtra = dgv.Columns.Contains("LastOrderExtra") ? dgv.Columns["LastOrderExtra"].Index : dgv.Columns.Count - 1;
+                //case 1: Enter on lastOrderAnz
+                if(curCol == colLastOrderAnz)
+                {
+                    dgv.EndEdit();
+                    dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
 
-                // --- Case 1: Enter on lastOrderNr ---
-                if (curCol == colLastOrderNr)
+                    string anzID = dgv.Rows[curRow].Cells["lastOrderAnz"].Value?.ToString()?.Trim() ?? "";
+                    var anz = articles.FirstOrDefault(a => a.CompNum == anzID);
+
+                    if (anz == null)
+                    {
+                        dgv.Rows[curRow].Cells["lastOrderAnz"].Value = 1;
+                    }
+                    dgv.CurrentCell = dgv.Rows[curRow].Cells["lastOrderNr"];
+                    dgv.BeginEdit(true);
+                    return true;
+                }
+                // --- Case 2: Enter on lastOrderNr ---
+                else if (curCol == colLastOrderNr)
                 {
                     dgv.EndEdit();
                     dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
@@ -338,7 +355,7 @@ namespace TestAddIn
 
                 // --- Case 2: Enter on LastOrderExtra ---
                 // TODO: extra update
-                if (curCol == colLastOrderExtra)
+                else if (curCol == colLastOrderExtra)
                 {
                     dgv.EndEdit();
                     dgv.CommitEdit(DataGridViewDataErrorContexts.Commit);
@@ -356,27 +373,36 @@ namespace TestAddIn
                         if (int.TryParse(extraInput, out int extraId))
                         {
                             var extraItem = TestAddIn.extras.ExtrasManager.GetExtraByIdCode(extraId, sizeCode);
+                            // Get the old extra ID stored in the cell (if any)
+                            var oldExtraId = dgv.Rows[curRow].Cells[colLastOrderExtra].Tag as int?;
 
                             if (extraItem != null)
                             {
-                                // Check if this extra already exists in the list
-                                var existingExtra = extras.FirstOrDefault(e => e.Id == extraItem.Id);
 
+                                // If an old extra exists and is different from the new one, remove it first
+                                if (oldExtraId.HasValue && oldExtraId.Value != extraItem.Id)
+                                {
+                                    var oldExtra = extras.FirstOrDefault(e => e.Id == oldExtraId.Value);
+                                    if (oldExtra != null)
+                                        extras.Remove(oldExtra);
+                                }
+
+                                // Check if the new extra already exists in the list
+                                var existingExtra = extras.FirstOrDefault(e => e.Id == extraItem.Id);
                                 if (existingExtra == null)
                                 {
-                                    // Add new extra item
-                                    extras.Add(extraItem);
+                                    extras.Add(extraItem); // Add new extra only if not already added
                                 }
-                                
-                            }
+
+                                // Store the current ID in the cell's Tag for tracking future changes
+                                dgv.Rows[curRow].Cells[colLastOrderExtra].Tag = extraItem.Id;
+                            } 
                             else
                             {
-                                MessageBox.Show(
-                                    "Extra ID not found! (ID: " + extraId + ")",
-                                    "Validation Error",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Warning
-                                );
+                                var oldExtra = extras.FirstOrDefault(e => e.Id == oldExtraId.Value);
+                                if (oldExtra != null)
+                                    extras.Remove(oldExtra);
+                                dgv.Rows[curRow].Cells["LastOrderExtra"].Value = 0;
                             }
                         }
                         else
@@ -390,7 +416,6 @@ namespace TestAddIn
                     {
                         // Empty input → reset
                         dgv.Rows[curRow].Cells["LastOrderExtra"].Value = 0;
-                        dgv.Rows[curRow].Cells["LastOrderExtraName"].Value = "";
                     }
 
 
@@ -451,8 +476,153 @@ namespace TestAddIn
 
                 return true; // handled
             }
+            else if (key == Keys.Back)
+            {
+                if (dgv.CurrentCell != null)
+                {
+                    int curRow = dgv.CurrentCell.RowIndex;
+                    int curCol = dgv.CurrentCell.ColumnIndex;
+
+                    // Get the current cell value
+                    var currentValue = dgv.CurrentCell.Value?.ToString();
+
+                    // CASE 1: If cell is NOT empty → clear the value, but stay in the same cell
+                    if (!string.IsNullOrEmpty(currentValue))
+                    {
+                        dgv.CurrentCell.Value = string.Empty;
+                        dgv.BeginEdit(true); // Keep editing mode
+                        return true; // Handled
+                    }
+
+                    // CASE 2: If cell is already empty → move focus to previous cell
+                    int prevCol = curCol - 1;
+                    int prevRow = curRow;
+
+                    // If we're at the start of the row, go to the last column of the previous row
+                    if (prevCol < 0)
+                    {
+                        prevRow--;
+                        if (prevRow >= 0)
+                        {
+                            prevCol = dgv.Columns.Count - 1;
+                        }
+                        else
+                        {
+                            // Already at the very first cell in the grid → do nothing
+                            return true;
+                        }
+                    }
+
+                    // Set the new current cell and enter edit mode
+                    dgv.CurrentCell = dgv.Rows[prevRow].Cells[prevCol];
+                    dgv.BeginEdit(true);
+                    return true;
+                }
+            }
+            else if (key == Keys.F9)
+            {
+                var customer = Customer.FindByKNr(this.knr.Text);
+                PrintOrder(lastOrdersTable, customer); // pass your customer and DGV
+                return true;
+            }
 
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        //TODO> update this vlue 
+        private void PrintOrder(DataGridView dgv, Customer customer)
+        {
+            // Collect order list from DGV
+
+            var orderList = new List<dynamic>();
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                // Safely parse total and discount
+                decimal totalValue = 0;
+                decimal discountValue = 0;
+
+                decimal.TryParse(this.labelSumValue.Text, out totalValue);
+                decimal.TryParse(this.labelLastDiscountValue.Text?.ToString() ?? "0", out discountValue);
+
+                var order = new
+                {
+                    count = row.Cells["lastOrderAnz"].Value ?? 0,
+                    id = row.Cells["lastOrderNr"].Value ?? "",
+                    name = row.Cells["lastOrderName"].Value ?? "",
+                    category = row.Cells["lastOrderSize"].Value ?? "",
+                    total = totalValue,
+                    discount = discountValue,
+                    extra = new
+                    {
+                        id = Convert.ToDecimal(row.Cells["LastOrderExtra"].Value ?? 0),
+                        name = "test",
+                        price = Convert.ToDecimal("2.2")
+                    }
+                };
+                orderList.Add(order);
+            }
+
+
+            // Prepare category mapping outside the loop
+            var categoryMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                    {
+                        { "Single", "S" },
+                        { "Jumbo", "J" },
+                        { "Family", "F" },
+                        { "Party", "P" }
+                    };
+
+            // Build HTML string
+            decimal totalPrices = 0;
+            decimal totalDiscounts = 0;
+
+            var sb = new StringBuilder();
+            sb.Append("<html><head>");
+            sb.Append("<style>table, th, td { border: 1px solid black; border-collapse: collapse; } th, td { padding: 4px; text-align: center; }</style>");
+            sb.Append("</head><body>");
+            sb.Append($"<div>{DateTime.Now:dd.MM.yyyy}</div>");
+            sb.Append($"<div>Customer: {customer.KNr} - {customer.Name}</div>");
+            sb.Append("<table><thead><tr><th>Anz</th><th>Nr.</th><th>Bez.</th><th>Kategorie</th><th>Pr</th></tr></thead><tbody>");
+
+            foreach (var order in orderList)
+            {
+                totalPrices += Convert.ToDecimal(order.total);
+                totalDiscounts += Convert.ToDecimal(order.discount) * Convert.ToDecimal(order.total) / 100;
+
+                // Safe category lookup
+                string categoryLetter;
+                if (!categoryMap.TryGetValue(order.category ?? "", out categoryLetter))
+                    categoryLetter = "";
+
+                sb.Append($"<tr><td>{order.count}X</td><td>{order.id}</td><td>{order.name}</td><td>{categoryLetter}</td><td>{order.total}</td></tr>");
+
+                if (Convert.ToInt16(order.extra.id) != 0)
+                {
+                    sb.Append($"<tr><td>-</td><td>{order.extra.id}</td><td>{order.extra.name}</td><td>-</td><td>{order.extra.price}</td></tr>");
+                }
+            }
+
+
+            sb.Append("</tbody></table>");
+            sb.Append($"<div>Total Brutto: €{(totalPrices + totalDiscounts):0.00}</div>");
+            sb.Append($"<div>Total Discount: €{totalDiscounts:0.00}</div>");
+            sb.Append($"<div>Total Netto: €{totalPrices:0.00}</div>");
+            sb.Append("<div>Vielen Dank für Ihre Bestellung</div>");
+            sb.Append("</body></html>");
+
+            // Print using WebBrowser
+            var wb = new WebBrowser
+            {
+                DocumentText = sb.ToString()
+            };
+            wb.DocumentCompleted += (s, e) =>
+            {
+                wb.Print();
+            };
+            // Add the WebBrowser to the form to keep it alive
+            this.Controls.Add(wb);
         }
 
 
@@ -606,8 +776,8 @@ namespace TestAddIn
                         str.Text = string.Empty;
                         ort.Text = string.Empty;
 
-                        var result = MessageBox.Show("Customer not found. Do you want to create a new customer?",
-                                                     "Create Customer",
+                        var result = MessageBox.Show("Kunde nicht gefunden. Möchten Sie einen neuen Kunden anlegen?",
+                                                     "Kunde anlegen",
                                                      MessageBoxButtons.YesNo,
                                                      MessageBoxIcon.Question);
 
@@ -1034,6 +1204,10 @@ namespace TestAddIn
                         }
 
                     }
+                } else if (e.KeyCode == Keys.Escape)
+                {
+                    customerListBox.Visible = false;
+                    e.Handled = true;
                 }
             }
         }

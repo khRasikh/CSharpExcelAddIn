@@ -45,6 +45,9 @@ namespace TestAddIn
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.search = new System.Windows.Forms.TextBox();
             this.bannerPanel = new System.Windows.Forms.Panel();
+            this.labelPRValue = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.labelDate = new System.Windows.Forms.Label();
             this.menuButton = new System.Windows.Forms.Button();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,6 +74,12 @@ namespace TestAddIn
             this.labelOrt = new System.Windows.Forms.Label();
             this.ort = new System.Windows.Forms.TextBox();
             this.footerPanel = new System.Windows.Forms.Panel();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.footerLabel1 = new System.Windows.Forms.Label();
             this.footerLabel2 = new System.Windows.Forms.Label();
@@ -81,21 +90,12 @@ namespace TestAddIn
             this.footerLabel7 = new System.Windows.Forms.Label();
             this.footerLabel8 = new System.Windows.Forms.Label();
             this.footerLabel9 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.labelDate = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.labelPRValue = new System.Windows.Forms.Label();
             this.lastOrderAnz = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lastOrderNr = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lastOrderName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lastOrderSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lastOrderExtra = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lastOrderPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
             this.bannerPanel.SuspendLayout();
             this.contextMenu.SuspendLayout();
             this.personalInfoPanel.SuspendLayout();
@@ -108,12 +108,13 @@ namespace TestAddIn
             this.search.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.search.BackColor = System.Drawing.Color.MediumBlue;
-            this.search.Font = new System.Drawing.Font("Microsoft Sans Serif", 22.25F, System.Drawing.FontStyle.Bold);
+            this.search.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.search.ForeColor = System.Drawing.Color.Yellow;
-            this.search.Location = new System.Drawing.Point(1102, 3);
+            this.search.Location = new System.Drawing.Point(1055, 3);
             this.search.Name = "search";
-            this.search.Size = new System.Drawing.Size(214, 41);
+            this.search.Size = new System.Drawing.Size(261, 44);
             this.search.TabIndex = 0;
+            this.search.Text = " ";
             this.search.TextChanged += new System.EventHandler(this.search_TextChanged);
             this.search.KeyDown += new System.Windows.Forms.KeyEventHandler(this.search_KeyDown);
             // 
@@ -130,6 +131,45 @@ namespace TestAddIn
             this.bannerPanel.Name = "bannerPanel";
             this.bannerPanel.Size = new System.Drawing.Size(1431, 50);
             this.bannerPanel.TabIndex = 1;
+            // 
+            // labelPRValue
+            // 
+            this.labelPRValue.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelPRValue.AutoSize = true;
+            this.labelPRValue.BackColor = System.Drawing.Color.MediumBlue;
+            this.labelPRValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
+            this.labelPRValue.ForeColor = System.Drawing.Color.Cyan;
+            this.labelPRValue.Location = new System.Drawing.Point(579, 7);
+            this.labelPRValue.Name = "labelPRValue";
+            this.labelPRValue.Size = new System.Drawing.Size(54, 31);
+            this.labelPRValue.TabIndex = 16;
+            this.labelPRValue.Text = "     ";
+            // 
+            // label7
+            // 
+            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label7.AutoSize = true;
+            this.label7.BackColor = System.Drawing.Color.MediumBlue;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
+            this.label7.ForeColor = System.Drawing.Color.Cyan;
+            this.label7.Location = new System.Drawing.Point(502, 8);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(87, 31);
+            this.label7.TabIndex = 15;
+            this.label7.Text = "PR = ";
+            // 
+            // labelDate
+            // 
+            this.labelDate.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.labelDate.AutoSize = true;
+            this.labelDate.BackColor = System.Drawing.Color.MediumBlue;
+            this.labelDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
+            this.labelDate.ForeColor = System.Drawing.Color.Cyan;
+            this.labelDate.Location = new System.Drawing.Point(23, 7);
+            this.labelDate.Name = "labelDate";
+            this.labelDate.Size = new System.Drawing.Size(374, 31);
+            this.labelDate.TabIndex = 14;
+            this.labelDate.Text = "                                             ";
             // 
             // menuButton
             // 
@@ -384,7 +424,7 @@ namespace TestAddIn
             this.knr.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.knr.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
             this.knr.ForeColor = System.Drawing.Color.Yellow;
-            this.knr.Location = new System.Drawing.Point(107, 2);
+            this.knr.Location = new System.Drawing.Point(105, 2);
             this.knr.Margin = new System.Windows.Forms.Padding(2);
             this.knr.Name = "knr";
             this.knr.Size = new System.Drawing.Size(154, 31);
@@ -519,6 +559,84 @@ namespace TestAddIn
             this.footerPanel.Size = new System.Drawing.Size(1431, 32);
             this.footerPanel.TabIndex = 4;
             // 
+            // label8
+            // 
+            this.label8.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label8.AutoSize = true;
+            this.label8.BackColor = System.Drawing.Color.Cyan;
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
+            this.label8.ForeColor = System.Drawing.Color.Red;
+            this.label8.Location = new System.Drawing.Point(689, 1);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(57, 31);
+            this.label8.TabIndex = 14;
+            this.label8.Text = "F6:";
+            // 
+            // label9
+            // 
+            this.label9.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label9.AutoSize = true;
+            this.label9.BackColor = System.Drawing.Color.Cyan;
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
+            this.label9.ForeColor = System.Drawing.Color.Black;
+            this.label9.Location = new System.Drawing.Point(740, 1);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(100, 31);
+            this.label9.TabIndex = 15;
+            this.label9.Text = "Fahrer";
+            // 
+            // label5
+            // 
+            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label5.AutoSize = true;
+            this.label5.BackColor = System.Drawing.Color.Cyan;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
+            this.label5.ForeColor = System.Drawing.Color.Black;
+            this.label5.Location = new System.Drawing.Point(1231, 1);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(81, 31);
+            this.label5.TabIndex = 13;
+            this.label5.Text = "Ende";
+            // 
+            // label6
+            // 
+            this.label6.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label6.AutoSize = true;
+            this.label6.BackColor = System.Drawing.Color.Cyan;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
+            this.label6.ForeColor = System.Drawing.Color.Red;
+            this.label6.Location = new System.Drawing.Point(1170, 1);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(73, 31);
+            this.label6.TabIndex = 12;
+            this.label6.Text = "F10:";
+            // 
+            // label3
+            // 
+            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label3.AutoSize = true;
+            this.label3.BackColor = System.Drawing.Color.Cyan;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
+            this.label3.ForeColor = System.Drawing.Color.Black;
+            this.label3.Location = new System.Drawing.Point(1061, 1);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(86, 31);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "druck";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.label4.AutoSize = true;
+            this.label4.BackColor = System.Drawing.Color.Cyan;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
+            this.label4.ForeColor = System.Drawing.Color.Red;
+            this.label4.Location = new System.Drawing.Point(1010, 1);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(57, 31);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "F9:";
+            // 
             // label2
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.Left;
@@ -650,107 +768,19 @@ namespace TestAddIn
             this.footerLabel9.TabIndex = 8;
             this.footerLabel9.Text = "F7:";
             // 
-            // label3
-            // 
-            this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.Cyan;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
-            this.label3.ForeColor = System.Drawing.Color.Black;
-            this.label3.Location = new System.Drawing.Point(1061, 1);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(86, 31);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "druck";
-            // 
-            // label4
-            // 
-            this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label4.AutoSize = true;
-            this.label4.BackColor = System.Drawing.Color.Cyan;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
-            this.label4.ForeColor = System.Drawing.Color.Red;
-            this.label4.Location = new System.Drawing.Point(1010, 1);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(57, 31);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "F9:";
-            // 
-            // label5
-            // 
-            this.label5.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label5.AutoSize = true;
-            this.label5.BackColor = System.Drawing.Color.Cyan;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
-            this.label5.ForeColor = System.Drawing.Color.Black;
-            this.label5.Location = new System.Drawing.Point(1231, 1);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(81, 31);
-            this.label5.TabIndex = 13;
-            this.label5.Text = "Ende";
-            // 
-            // label6
-            // 
-            this.label6.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label6.AutoSize = true;
-            this.label6.BackColor = System.Drawing.Color.Cyan;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
-            this.label6.ForeColor = System.Drawing.Color.Red;
-            this.label6.Location = new System.Drawing.Point(1170, 1);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(73, 31);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "F10:";
-            // 
-            // labelDate
-            // 
-            this.labelDate.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.labelDate.AutoSize = true;
-            this.labelDate.BackColor = System.Drawing.Color.MediumBlue;
-            this.labelDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
-            this.labelDate.ForeColor = System.Drawing.Color.Cyan;
-            this.labelDate.Location = new System.Drawing.Point(23, 7);
-            this.labelDate.Name = "labelDate";
-            this.labelDate.Size = new System.Drawing.Size(374, 31);
-            this.labelDate.TabIndex = 14;
-            this.labelDate.Text = "                                             ";
-            // 
-            // label7
-            // 
-            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label7.AutoSize = true;
-            this.label7.BackColor = System.Drawing.Color.MediumBlue;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
-            this.label7.ForeColor = System.Drawing.Color.Cyan;
-            this.label7.Location = new System.Drawing.Point(502, 8);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(87, 31);
-            this.label7.TabIndex = 15;
-            this.label7.Text = "PR = ";
-            // 
-            // labelPRValue
-            // 
-            this.labelPRValue.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.labelPRValue.AutoSize = true;
-            this.labelPRValue.BackColor = System.Drawing.Color.MediumBlue;
-            this.labelPRValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
-            this.labelPRValue.ForeColor = System.Drawing.Color.Cyan;
-            this.labelPRValue.Location = new System.Drawing.Point(579, 7);
-            this.labelPRValue.Name = "labelPRValue";
-            this.labelPRValue.Size = new System.Drawing.Size(54, 31);
-            this.labelPRValue.TabIndex = 16;
-            this.labelPRValue.Text = "     ";
-            // 
             // lastOrderAnz
             // 
             dataGridViewCellStyle3.BackColor = System.Drawing.Color.MediumBlue;
             dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Yellow;
+            dataGridViewCellStyle3.Format = "N0";
+            dataGridViewCellStyle3.NullValue = null;
             dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.MediumBlue;
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Yellow;
             this.lastOrderAnz.DefaultCellStyle = dataGridViewCellStyle3;
             this.lastOrderAnz.FillWeight = 7.793834F;
             this.lastOrderAnz.HeaderText = "Anz";
+            this.lastOrderAnz.MaxInputLength = 3;
             this.lastOrderAnz.MinimumWidth = 10;
             this.lastOrderAnz.Name = "lastOrderAnz";
             this.lastOrderAnz.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
@@ -762,12 +792,14 @@ namespace TestAddIn
             this.lastOrderNr.DefaultCellStyle = dataGridViewCellStyle4;
             this.lastOrderNr.FillWeight = 7.793834F;
             this.lastOrderNr.HeaderText = "Nr.";
+            this.lastOrderNr.MaxInputLength = 3;
             this.lastOrderNr.Name = "lastOrderNr";
             // 
             // lastOrderName
             // 
             this.lastOrderName.FillWeight = 12F;
             this.lastOrderName.HeaderText = "Bez";
+            this.lastOrderName.MaxInputLength = 100;
             this.lastOrderName.MinimumWidth = 10;
             this.lastOrderName.Name = "lastOrderName";
             // 
@@ -775,6 +807,7 @@ namespace TestAddIn
             // 
             this.lastOrderSize.FillWeight = 7.793834F;
             this.lastOrderSize.HeaderText = "S/J";
+            this.lastOrderSize.MaxInputLength = 50;
             this.lastOrderSize.Name = "lastOrderSize";
             // 
             // lastOrderExtra
@@ -783,6 +816,7 @@ namespace TestAddIn
             this.lastOrderExtra.DefaultCellStyle = dataGridViewCellStyle5;
             this.lastOrderExtra.FillWeight = 18F;
             this.lastOrderExtra.HeaderText = "Extra";
+            this.lastOrderExtra.MaxInputLength = 3;
             this.lastOrderExtra.Name = "lastOrderExtra";
             // 
             // lastOrderPrice
@@ -792,33 +826,8 @@ namespace TestAddIn
             this.lastOrderPrice.DefaultCellStyle = dataGridViewCellStyle6;
             this.lastOrderPrice.FillWeight = 7.793834F;
             this.lastOrderPrice.HeaderText = "Preis";
+            this.lastOrderPrice.MaxInputLength = 10;
             this.lastOrderPrice.Name = "lastOrderPrice";
-            // 
-            // label8
-            // 
-            this.label8.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label8.AutoSize = true;
-            this.label8.BackColor = System.Drawing.Color.Cyan;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
-            this.label8.ForeColor = System.Drawing.Color.Red;
-            this.label8.Location = new System.Drawing.Point(689, 1);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(57, 31);
-            this.label8.TabIndex = 14;
-            this.label8.Text = "F6:";
-            // 
-            // label9
-            // 
-            this.label9.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.label9.AutoSize = true;
-            this.label9.BackColor = System.Drawing.Color.Cyan;
-            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
-            this.label9.ForeColor = System.Drawing.Color.Black;
-            this.label9.Location = new System.Drawing.Point(740, 1);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(100, 31);
-            this.label9.TabIndex = 15;
-            this.label9.Text = "Fahrer";
             // 
             // Form1
             // 
@@ -893,15 +902,14 @@ namespace TestAddIn
         private Label labelDate;
         private Label label7;
         private Label labelPRValue;
+        private Label label8;
+        private Label label9;
         private DataGridViewTextBoxColumn lastOrderAnz;
         private DataGridViewTextBoxColumn lastOrderNr;
         private DataGridViewTextBoxColumn lastOrderName;
         private DataGridViewTextBoxColumn lastOrderSize;
         private DataGridViewTextBoxColumn lastOrderExtra;
         private DataGridViewTextBoxColumn lastOrderPrice;
-        private Label label8;
-        private Label label9;
-
     }
 
     public class CreateOrderForm : UserControl
