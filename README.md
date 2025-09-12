@@ -54,4 +54,3 @@ This project is licensed under the [MIT License](LICENSE).
 ## 📬 Contact
 
 If you have questions about the educational use of this code, feel free to open an issue on GitHub.  
-Please do **not** contact the author regarding production deployment or business use — such usage is **not supported**.
