@@ -15,58 +15,51 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Log environment variables (Build)
         run: |
-          echo "🔹 DOTNET_VERSION = ${{ env.DOTNET_VERSION }}"
-          echo "🔹 AZURE_WEBAPP_NAME = ${{ env.AZURE_WEBAPP_NAME }}"
-          echo "🔹 AZURE_WEBAPP_PACKAGE_PATH = ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
-          echo "🔹 DOTNET_ROOT = ${{ env.DOTNET_ROOT }}"
+          echo "🔹 DOTNET_VERSION = $env:DOTNET_VERSION"
+          echo "🔹 AZURE_WEBAPP_NAME = $env:AZURE_WEBAPP_NAME"
+          echo "🔹 AZURE_WEBAPP_PACKAGE_PATH = $env:AZURE_WEBAPP_PACKAGE_PATH"
+          echo "🔹 DOTNET_ROOT = $env:DOTNET_ROOT"
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Set up dependency caching for faster builds
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
       - name: Build with dotnet
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish -c Release -o $env:DOTNET_ROOT\myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: windows-app
+          path: ${{ env.DOTNET_ROOT }}\myapp
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
+
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
+          name: windows-app
 
       - name: Log environment variables (Deploy)
         run: |
           echo "🚀 Deployment logs:"
-          echo "🔹 AZURE_WEBAPP_NAME = ${{ env.AZURE_WEBAPP_NAME }}"
-          echo "🔹 AZURE_WEBAPP_PACKAGE_PATH = ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
-          echo "🔹 DOTNET_VERSION = ${{ env.DOTNET_VERSION }}"
+          echo "🔹 AZURE_WEBAPP_NAME = $env:AZURE_WEBAPP_NAME"
+          echo "🔹 AZURE_WEBAPP_PACKAGE_PATH = $env:AZURE_WEBAPP_PACKAGE_PATH"
+          echo "🔹 DOTNET_VERSION = $env:DOTNET_VERSION"
 
       - name: Mock deploy step
         run: echo "✅ Deployment skipped (mock run only)."
