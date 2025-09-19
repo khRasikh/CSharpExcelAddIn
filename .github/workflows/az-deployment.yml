@@ -25,20 +25,18 @@ jobs:
           echo "🔹 DOTNET_VERSION = $env:DOTNET_VERSION"
           echo "🔹 AZURE_WEBAPP_NAME = $env:AZURE_WEBAPP_NAME"
           echo "🔹 AZURE_WEBAPP_PACKAGE_PATH = $env:AZURE_WEBAPP_PACKAGE_PATH"
+          echo "🔹 DOTNET_ROOT = $env:DOTNET_ROOT"
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore dependencies
-        run: dotnet restore ./CSharpExcelAddIn/CSharpExcelAddIn.sln
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
 
-      - name: Build (x86)
-        run: dotnet build ./CSharpExcelAddIn/CSharpExcelAddIn.sln --configuration Release --runtime win-x86 --no-restore
-
-      - name: Publish (x86)
-        run: dotnet publish ./CSharpExcelAddIn/CSharpExcelAddIn.sln -c Release -r win-x86 --self-contained false -o $env:DOTNET_ROOT\myapp --no-restore
+      - name: dotnet publish
+        run: dotnet publish -c Release -o $env:DOTNET_ROOT\myapp
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -51,11 +49,6 @@ jobs:
     needs: build
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: windows-app
-
       - name: Log environment variables (Deploy)
         run: |
           echo "🚀 Deployment logs:"
