@@ -310,7 +310,7 @@ namespace TestAddIn
                 int colLastOrderNr = dgv.Columns.Contains("lastOrderNr") ? dgv.Columns["lastOrderNr"].Index : -1;
                 int colLastOrderBez = dgv.Columns.Contains("lastOrderBez") ? dgv.Columns["lastOrderBez"].Index : -1;
                 int colLastOrderSize = dgv.Columns.Contains("lastOrderSize") ? dgv.Columns["lastOrderSize"].Index : -1;
-                int colLastOrderExtra = dgv.Columns.Contains("LastOrderExtra") ? dgv.Columns["LastOrderExtra"].Index : dgv.Columns.Count - 1;
+                int colLastOrderExtra = dgv.Columns.Contains("lastOrderExtra") ? dgv.Columns["lastOrderExtra"].Index : dgv.Columns.Count - 1;
                 //case 1: Enter on lastOrderAnz
                 if(curCol == colLastOrderAnz)
                 {
@@ -374,7 +374,7 @@ namespace TestAddIn
                         {
                             var extraItem = TestAddIn.extras.ExtrasManager.GetExtraByIdCode(extraId, sizeCode);
                             // Get the old extra ID stored in the cell (if any)
-                            var oldExtraId = dgv.Rows[curRow].Cells[colLastOrderExtra].Tag as int?;
+                            var oldExtraId = dgv.Rows[curRow].Cells[colLastOrderExtra].Tag  as int?;
 
                             if (extraItem != null)
                             {
@@ -402,20 +402,20 @@ namespace TestAddIn
                                 var oldExtra = extras.FirstOrDefault(e => e.Id == oldExtraId.Value);
                                 if (oldExtra != null)
                                     extras.Remove(oldExtra);
-                                dgv.Rows[curRow].Cells["LastOrderExtra"].Value = 0;
+                                dgv.Rows[curRow].Cells["lastOrderExtra"].Value = 0;
                             }
                         }
                         else
                         {
                             // Invalid input → reset
-                            dgv.Rows[curRow].Cells["LastOrderExtra"].Value = 0;
+                            dgv.Rows[curRow].Cells["lastOrderExtra"].Value = 0;
                             MessageBox.Show("Invalid Extra ID!", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         }
                     }
                     else
                     {
                         // Empty input → reset
-                        dgv.Rows[curRow].Cells["LastOrderExtra"].Value = 0;
+                        dgv.Rows[curRow].Cells["lastOrderExtra"].Value = 0;
                     }
 
 
@@ -546,70 +546,92 @@ namespace TestAddIn
                 decimal.TryParse(this.labelSumValue.Text, out totalValue);
                 decimal.TryParse(this.labelLastDiscountValue.Text?.ToString() ?? "0", out discountValue);
 
+                // Get Extra ID as int
+                int extraId = 0;
+                int.TryParse(row.Cells["LastOrderExtra"].Value?.ToString() ?? "0", out extraId);
+
+                // Get size code as char (first character, uppercase)
+                string sizeStr = row.Cells["lastOrderSize"].Value?.ToString() ?? "";
+                char sizeCode = !string.IsNullOrWhiteSpace(sizeStr)
+                    ? char.ToUpper(sizeStr[0])
+                    : 'S';
+
+                // Get real Extra from your manager
+                var extraObj = ExtrasManager.GetExtraByIdCode(extraId, sizeCode);
+
+
                 var order = new
                 {
-                    count = row.Cells["lastOrderAnz"].Value ?? 0,
-                    id = row.Cells["lastOrderNr"].Value ?? "",
-                    name = row.Cells["lastOrderName"].Value ?? "",
-                    category = row.Cells["lastOrderSize"].Value ?? "",
-                    total = totalValue,
-                    discount = discountValue,
+                    count = row.Cells["lastOrderAnz"].Value?.ToString() ?? "0",
+                    id = row.Cells["lastOrderNr"].Value?.ToString() ?? "",
+                    name = row.Cells["lastOrderName"].Value?.ToString() ?? "",
+                    price = row.Cells["lastOrderPrice"].Value?.ToString() ?? "",
+                    size = sizeCode,
                     extra = new
                     {
-                        id = Convert.ToDecimal(row.Cells["LastOrderExtra"].Value ?? 0),
-                        name = "test",
-                        price = Convert.ToDecimal("2.2")
+                        id = extraObj?.Id ?? 0,
+                        name = extraObj?.Name ?? "",
+                        price = extraObj?.Price ?? 0
                     }
                 };
+               
                 orderList.Add(order);
             }
 
-
-            // Prepare category mapping outside the loop
-            var categoryMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                    {
-                        { "Single", "S" },
-                        { "Jumbo", "J" },
-                        { "Family", "F" },
-                        { "Party", "P" }
-                    };
-
             // Build HTML string
-            decimal totalPrices = 0;
-            decimal totalDiscounts = 0;
-
             var sb = new StringBuilder();
             sb.Append("<html><head>");
-            sb.Append("<style>table, th, td { border: 1px solid black; border-collapse: collapse; } th, td { padding: 4px; text-align: center; }</style>");
+            sb.Append(@"
+            <style>
+                @page { size: A5; margin: 10mm; }
+                body { font-family: Arial, sans-serif; font-size: 14px; }
+                h2 { font-weight: bold; margin-bottom: 2px; }
+                table { width: 100%; dashed black; border-collapse: collapse; margin-top: 5px; }
+                th, td { border: 1px black; padding: 1px; }
+                th { font-weight: bold; background-color: #f2f2f2; }
+                td.right { text-align: right; }
+                .totals { margin-top: 5px; text-align: right; font-weight: bold; }
+                .footer { margin-top: 5px; text-align: center; font-style: italic; }
+            </style>");
             sb.Append("</head><body>");
-            sb.Append($"<div>{DateTime.Now:dd.MM.yyyy}</div>");
-            sb.Append($"<div>Customer: {customer.KNr} - {customer.Name}</div>");
-            sb.Append("<table><thead><tr><th>Anz</th><th>Nr.</th><th>Bez.</th><th>Kategorie</th><th>Pr</th></tr></thead><tbody>");
+
+            // Header
+            sb.Append($"<div><strong>Datum:</strong> {DateTime.Now:dd.MM.yyyy HH:mm:ss}</div>");
+            sb.Append($"<div><strong>KNr:</strong> {customer.KNr} - <strong>Name:</strong> {customer.Name} - <strong>Tel:</strong> {customer.Tel}</div>");
+            sb.Append($"<div><strong>Add:</strong> {customer.Str}, {customer.Ort}</div>");
+
+            // Table
+            sb.Append("<table><thead><tr>");
+            sb.Append("<th>Anz</th><th>Nr.</th><th>Bez.</th><th>Size</th><th>Preise</th>");
+            sb.Append("</tr></thead><tbody>");
 
             foreach (var order in orderList)
             {
-                totalPrices += Convert.ToDecimal(order.total);
-                totalDiscounts += Convert.ToDecimal(order.discount) * Convert.ToDecimal(order.total) / 100;
-
-                // Safe category lookup
-                string categoryLetter;
-                if (!categoryMap.TryGetValue(order.category ?? "", out categoryLetter))
-                    categoryLetter = "";
-
-                sb.Append($"<tr><td>{order.count}X</td><td>{order.id}</td><td>{order.name}</td><td>{categoryLetter}</td><td>{order.total}</td></tr>");
+                sb.Append($"<tr><td>{order.count}X</td><td>{order.id}</td><td>{order.name}</td><td>{order.size}</td><td class='right'>€{order.price}</td></tr>");
 
                 if (Convert.ToInt16(order.extra.id) != 0)
                 {
-                    sb.Append($"<tr><td>-</td><td>{order.extra.id}</td><td>{order.extra.name}</td><td>-</td><td>{order.extra.price}</td></tr>");
+                    sb.Append($"<tr><td>-</td><td>{order.extra.id}</td><td>{order.extra.name}</td><td>-</td><td class='right'>€{order.extra.price}</td></tr>");
                 }
             }
-
-
             sb.Append("</tbody></table>");
-            sb.Append($"<div>Total Brutto: €{(totalPrices + totalDiscounts):0.00}</div>");
-            sb.Append($"<div>Total Discount: €{totalDiscounts:0.00}</div>");
-            sb.Append($"<div>Total Netto: €{totalPrices:0.00}</div>");
-            sb.Append("<div>Vielen Dank für Ihre Bestellung</div>");
+
+            // Totals aligned right
+            decimal sum = 0, discount = 0;
+            decimal.TryParse(this.labelSumValue.Text, out sum);
+            decimal.TryParse(this.labelLastDiscountValue.Text, out discount);
+
+            sb.Append("<div class='totals'>");
+            sb.Append("<table style='width: 100%; border: none;'>");
+            sb.Append("<tr><td style='font-weight: bold;'>Brutto:</td><td style='text-align: right; font-weight: bold; '>" + this.labelSumValue.Text + "</td></tr>");
+            sb.Append("<tr><td style='font-weight: bold;'>Rabbat:</td><td style='text-align: right; font-weight: bold;'>" + this.labelLastDiscountValue.Text + "</td></tr>");
+            sb.Append("<tr><td style='font-weight: bold;'>Netto:</td><td style='text-align: right; font-weight: bold;'>" + this.labelSumValue.Text + "</td></tr>");
+            sb.Append("</table>");
+            sb.Append("</div>");
+
+            // Footer
+            sb.Append("<div class='footer'>Vielen Dank für Ihre Bestellung</div>");
+
             sb.Append("</body></html>");
 
             // Print using WebBrowser
@@ -621,7 +643,7 @@ namespace TestAddIn
             {
                 wb.Print();
             };
-            // Add the WebBrowser to the form to keep it alive
+            // Keep WebBrowser alive
             this.Controls.Add(wb);
         }
 
@@ -672,7 +694,14 @@ namespace TestAddIn
                         Rabbat = this.textBoxDiscount.Text.Trim()
                     };
 
-                    ordersForKnr.Add(order);
+                    if (!string.IsNullOrWhiteSpace(order.Anz) &&
+                        !string.IsNullOrWhiteSpace(order.Nr) &&
+                        !string.IsNullOrWhiteSpace(order.Bez) &&
+                        !string.IsNullOrWhiteSpace(order.Size) &&
+                        !string.IsNullOrWhiteSpace(order.Price))
+                    {
+                        ordersForKnr.Add(order);
+                    }
                 }
 
                 // 👉 einmal speichern mit allen Orders für diese KNr

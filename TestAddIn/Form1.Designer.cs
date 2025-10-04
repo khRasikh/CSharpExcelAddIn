@@ -34,15 +34,15 @@ namespace TestAddIn
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
             this.search = new System.Windows.Forms.TextBox();
             this.bannerPanel = new System.Windows.Forms.Panel();
             this.labelPRValue = new System.Windows.Forms.Label();
@@ -57,6 +57,12 @@ namespace TestAddIn
             this.label1 = new System.Windows.Forms.Label();
             this.labelLastDiscountValue = new System.Windows.Forms.Label();
             this.lastOrdersTable = new System.Windows.Forms.DataGridView();
+            this.lastOrderAnz = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastOrderNr = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastOrderName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastOrderSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastOrderExtra = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastOrderPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.textBoxDiscount = new System.Windows.Forms.TextBox();
             this.labelCountValue = new System.Windows.Forms.Label();
             this.labelSumValue = new System.Windows.Forms.Label();
@@ -90,12 +96,6 @@ namespace TestAddIn
             this.footerLabel7 = new System.Windows.Forms.Label();
             this.footerLabel8 = new System.Windows.Forms.Label();
             this.footerLabel9 = new System.Windows.Forms.Label();
-            this.lastOrderAnz = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastOrderNr = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastOrderName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastOrderSize = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastOrderExtra = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lastOrderPrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bannerPanel.SuspendLayout();
             this.contextMenu.SuspendLayout();
             this.personalInfoPanel.SuspendLayout();
@@ -112,7 +112,7 @@ namespace TestAddIn
             this.search.ForeColor = System.Drawing.Color.Yellow;
             this.search.Location = new System.Drawing.Point(1055, 3);
             this.search.Name = "search";
-            this.search.Size = new System.Drawing.Size(261, 44);
+            this.search.Size = new System.Drawing.Size(280, 44);
             this.search.TabIndex = 0;
             this.search.Text = " ";
             this.search.TextChanged += new System.EventHandler(this.search_TextChanged);
@@ -239,9 +239,9 @@ namespace TestAddIn
             this.personalInfoPanel.Controls.Add(this.ort);
             this.personalInfoPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.personalInfoPanel.ForeColor = System.Drawing.Color.Yellow;
-            this.personalInfoPanel.Location = new System.Drawing.Point(12, 62);
+            this.personalInfoPanel.Location = new System.Drawing.Point(4, 50);
             this.personalInfoPanel.Name = "personalInfoPanel";
-            this.personalInfoPanel.Size = new System.Drawing.Size(1346, 576);
+            this.personalInfoPanel.Size = new System.Drawing.Size(1365, 576);
             this.personalInfoPanel.TabIndex = 2;
             this.personalInfoPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.personalInfoPanel_Paint);
             // 
@@ -265,31 +265,31 @@ namespace TestAddIn
             this.labelLastDiscountValue.Location = new System.Drawing.Point(352, 533);
             this.labelLastDiscountValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelLastDiscountValue.Name = "labelLastDiscountValue";
-            this.labelLastDiscountValue.Size = new System.Drawing.Size(129, 36);
+            this.labelLastDiscountValue.Size = new System.Drawing.Size(96, 36);
             this.labelLastDiscountValue.TabIndex = 23;
-            this.labelLastDiscountValue.Text = "(-€0.00)";
+            this.labelLastDiscountValue.Text = "€0.00";
             // 
             // lastOrdersTable
             // 
             this.lastOrdersTable.AllowUserToOrderColumns = true;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Yellow;
-            this.lastOrdersTable.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle10.BackColor = System.Drawing.Color.MediumBlue;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.Color.Yellow;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.Color.MediumBlue;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.Color.Yellow;
+            this.lastOrdersTable.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle10;
             this.lastOrdersTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.lastOrdersTable.BackgroundColor = System.Drawing.Color.MediumBlue;
             this.lastOrdersTable.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.lastOrdersTable.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Lime;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.lastOrdersTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle11.BackColor = System.Drawing.Color.MediumBlue;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.Color.Yellow;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.Color.Lime;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.lastOrdersTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle11;
             this.lastOrdersTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.lastOrdersTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.lastOrderAnz,
@@ -298,36 +298,97 @@ namespace TestAddIn
             this.lastOrderSize,
             this.lastOrderExtra,
             this.lastOrderPrice});
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle7.ForeColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.lastOrdersTable.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle16.BackColor = System.Drawing.Color.MediumBlue;
+            dataGridViewCellStyle16.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle16.ForeColor = System.Drawing.Color.Yellow;
+            dataGridViewCellStyle16.SelectionBackColor = System.Drawing.Color.MediumBlue;
+            dataGridViewCellStyle16.SelectionForeColor = System.Drawing.Color.Yellow;
+            dataGridViewCellStyle16.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.lastOrdersTable.DefaultCellStyle = dataGridViewCellStyle16;
             this.lastOrdersTable.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.lastOrdersTable.GridColor = System.Drawing.Color.MediumBlue;
             this.lastOrdersTable.Location = new System.Drawing.Point(60, 175);
             this.lastOrdersTable.Name = "lastOrdersTable";
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle8.ForeColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.lastOrdersTable.RowHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle17.BackColor = System.Drawing.Color.MediumBlue;
+            dataGridViewCellStyle17.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle17.ForeColor = System.Drawing.Color.Yellow;
+            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.Color.MediumBlue;
+            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.Color.Yellow;
+            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.lastOrdersTable.RowHeadersDefaultCellStyle = dataGridViewCellStyle17;
             this.lastOrdersTable.RowHeadersVisible = false;
             this.lastOrdersTable.RowHeadersWidth = 5;
-            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.lastOrdersTable.RowsDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle18.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.lastOrdersTable.RowsDefaultCellStyle = dataGridViewCellStyle18;
             this.lastOrdersTable.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lastOrdersTable.RowTemplate.Height = 25;
             this.lastOrdersTable.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.lastOrdersTable.Size = new System.Drawing.Size(1228, 330);
             this.lastOrdersTable.TabIndex = 16;
             this.lastOrdersTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+            // 
+            // lastOrderAnz
+            // 
+            dataGridViewCellStyle12.BackColor = System.Drawing.Color.MediumBlue;
+            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle12.ForeColor = System.Drawing.Color.Yellow;
+            dataGridViewCellStyle12.Format = "N0";
+            dataGridViewCellStyle12.NullValue = null;
+            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.Color.MediumBlue;
+            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.Color.Yellow;
+            this.lastOrderAnz.DefaultCellStyle = dataGridViewCellStyle12;
+            this.lastOrderAnz.FillWeight = 7.793834F;
+            this.lastOrderAnz.HeaderText = "Anz";
+            this.lastOrderAnz.MaxInputLength = 3;
+            this.lastOrderAnz.MinimumWidth = 10;
+            this.lastOrderAnz.Name = "lastOrderAnz";
+            this.lastOrderAnz.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // lastOrderNr
+            // 
+            dataGridViewCellStyle13.Format = "N0";
+            dataGridViewCellStyle13.NullValue = null;
+            this.lastOrderNr.DefaultCellStyle = dataGridViewCellStyle13;
+            this.lastOrderNr.FillWeight = 7.793834F;
+            this.lastOrderNr.HeaderText = "Nr.";
+            this.lastOrderNr.MaxInputLength = 3;
+            this.lastOrderNr.Name = "lastOrderNr";
+            // 
+            // lastOrderName
+            // 
+            this.lastOrderName.FillWeight = 12F;
+            this.lastOrderName.HeaderText = "Bez";
+            this.lastOrderName.MaxInputLength = 100;
+            this.lastOrderName.MinimumWidth = 10;
+            this.lastOrderName.Name = "lastOrderName";
+            // 
+            // lastOrderSize
+            // 
+            this.lastOrderSize.FillWeight = 7.793834F;
+            this.lastOrderSize.HeaderText = "S/J";
+            this.lastOrderSize.MaxInputLength = 50;
+            this.lastOrderSize.Name = "lastOrderSize";
+            // 
+            // lastOrderExtra
+            // 
+            dataGridViewCellStyle14.Format = "N0";
+            this.lastOrderExtra.DefaultCellStyle = dataGridViewCellStyle14;
+            this.lastOrderExtra.FillWeight = 18F;
+            this.lastOrderExtra.HeaderText = "Extra";
+            this.lastOrderExtra.MaxInputLength = 3;
+            this.lastOrderExtra.Name = "lastOrderExtra";
+            // 
+            // lastOrderPrice
+            // 
+            dataGridViewCellStyle15.Format = "N2";
+            dataGridViewCellStyle15.NullValue = null;
+            this.lastOrderPrice.DefaultCellStyle = dataGridViewCellStyle15;
+            this.lastOrderPrice.FillWeight = 7.793834F;
+            this.lastOrderPrice.HeaderText = "Preis";
+            this.lastOrderPrice.MaxInputLength = 10;
+            this.lastOrderPrice.Name = "lastOrderPrice";
             // 
             // textBoxDiscount
             // 
@@ -364,9 +425,9 @@ namespace TestAddIn
             this.labelSumValue.Location = new System.Drawing.Point(963, 533);
             this.labelSumValue.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelSumValue.Name = "labelSumValue";
-            this.labelSumValue.Size = new System.Drawing.Size(105, 36);
+            this.labelSumValue.Size = new System.Drawing.Size(78, 36);
             this.labelSumValue.TabIndex = 20;
-            this.labelSumValue.Text = "€ 0.00";
+            this.labelSumValue.Text = "0.00";
             // 
             // labelSum
             // 
@@ -767,67 +828,6 @@ namespace TestAddIn
             this.footerLabel9.Size = new System.Drawing.Size(57, 31);
             this.footerLabel9.TabIndex = 8;
             this.footerLabel9.Text = "F7:";
-            // 
-            // lastOrderAnz
-            // 
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 20.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Yellow;
-            dataGridViewCellStyle3.Format = "N0";
-            dataGridViewCellStyle3.NullValue = null;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.MediumBlue;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Yellow;
-            this.lastOrderAnz.DefaultCellStyle = dataGridViewCellStyle3;
-            this.lastOrderAnz.FillWeight = 7.793834F;
-            this.lastOrderAnz.HeaderText = "Anz";
-            this.lastOrderAnz.MaxInputLength = 3;
-            this.lastOrderAnz.MinimumWidth = 10;
-            this.lastOrderAnz.Name = "lastOrderAnz";
-            this.lastOrderAnz.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-            // 
-            // lastOrderNr
-            // 
-            dataGridViewCellStyle4.Format = "N0";
-            dataGridViewCellStyle4.NullValue = null;
-            this.lastOrderNr.DefaultCellStyle = dataGridViewCellStyle4;
-            this.lastOrderNr.FillWeight = 7.793834F;
-            this.lastOrderNr.HeaderText = "Nr.";
-            this.lastOrderNr.MaxInputLength = 3;
-            this.lastOrderNr.Name = "lastOrderNr";
-            // 
-            // lastOrderName
-            // 
-            this.lastOrderName.FillWeight = 12F;
-            this.lastOrderName.HeaderText = "Bez";
-            this.lastOrderName.MaxInputLength = 100;
-            this.lastOrderName.MinimumWidth = 10;
-            this.lastOrderName.Name = "lastOrderName";
-            // 
-            // lastOrderSize
-            // 
-            this.lastOrderSize.FillWeight = 7.793834F;
-            this.lastOrderSize.HeaderText = "S/J";
-            this.lastOrderSize.MaxInputLength = 50;
-            this.lastOrderSize.Name = "lastOrderSize";
-            // 
-            // lastOrderExtra
-            // 
-            dataGridViewCellStyle5.Format = "N0";
-            this.lastOrderExtra.DefaultCellStyle = dataGridViewCellStyle5;
-            this.lastOrderExtra.FillWeight = 18F;
-            this.lastOrderExtra.HeaderText = "Extra";
-            this.lastOrderExtra.MaxInputLength = 3;
-            this.lastOrderExtra.Name = "lastOrderExtra";
-            // 
-            // lastOrderPrice
-            // 
-            dataGridViewCellStyle6.Format = "N2";
-            dataGridViewCellStyle6.NullValue = null;
-            this.lastOrderPrice.DefaultCellStyle = dataGridViewCellStyle6;
-            this.lastOrderPrice.FillWeight = 7.793834F;
-            this.lastOrderPrice.HeaderText = "Preis";
-            this.lastOrderPrice.MaxInputLength = 10;
-            this.lastOrderPrice.Name = "lastOrderPrice";
             // 
             // Form1
             // 
