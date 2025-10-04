@@ -586,12 +586,12 @@ namespace TestAddIn
                 @page { size: A5; margin: 10mm; }
                 body { font-family: Arial, sans-serif; font-size: 14px; }
                 h2 { font-weight: bold; margin-bottom: 2px; }
-                table { width: 100%; dashed black; border-collapse: collapse; margin-top: 5px; }
-                th, td { border: 1px black; padding: 1px; }
+                table { width: 70%; border-collapse: collapse; margin-top: 5px; }
+                th, td { border: 1px padding: 1px 1px; word-break: break-word; }
                 th { font-weight: bold; background-color: #f2f2f2; }
                 td.right { text-align: right; }
-                .totals { margin-top: 5px; text-align: right; font-weight: bold; }
-                .footer { margin-top: 5px; text-align: center; font-style: italic; }
+                .totals { margin-top: 5px; text-align: left; font-weight: bold; }
+                .footer { margin-top: 5px; text-align: left; }
             </style>");
             sb.Append("</head><body>");
 
@@ -622,7 +622,7 @@ namespace TestAddIn
             decimal.TryParse(this.labelLastDiscountValue.Text, out discount);
 
             sb.Append("<div class='totals'>");
-            sb.Append("<table style='width: 100%; border: none;'>");
+            sb.Append("<table style='width: 70%; border: none;'>");
             sb.Append("<tr><td style='font-weight: bold;'>Brutto:</td><td style='text-align: right; font-weight: bold; '>" + this.labelSumValue.Text + "</td></tr>");
             sb.Append("<tr><td style='font-weight: bold;'>Rabbat:</td><td style='text-align: right; font-weight: bold;'>" + this.labelLastDiscountValue.Text + "</td></tr>");
             sb.Append("<tr><td style='font-weight: bold;'>Netto:</td><td style='text-align: right; font-weight: bold;'>" + this.labelSumValue.Text + "</td></tr>");
@@ -1140,20 +1140,21 @@ namespace TestAddIn
 
                 if (matches.Count > 0)
                 {
+
                     customerListBox.Visible = true;
-                    // Ensure str control is valid before accessing Bottom
-                    if (str != null && str.IsHandleCreated)
-                    {
-                        customerListBox.Top = str.Bottom + 60; // Position below str TextBox with 20px margin
-                    }
-                    else
-                    {
-                        // Fallback: Position relative to form's top
-                        customerListBox.Top = 100;
-                    }
-                    customerListBox.Left = str?.Left ?? 10; // Fallback to 10 if str is null
-                    customerListBox.Width = str?.Width ?? 200; // Fallback to 200 if str is null
-                    customerListBox.Height = 400; // Match constructor height
+
+                    // Make the popup wider
+                    int popupWidth = (str?.Width ?? 100) * 2;
+                    customerListBox.Width = popupWidth;
+                    customerListBox.Height = Math.Min(400, matches.Count * customerListBox.ItemHeight + 8); // Adjust height dynamically
+
+                    // Center the popup on the form instead of positioning below str
+                    customerListBox.Left = (this.ClientSize.Width - customerListBox.Width) / 2;
+                    customerListBox.Top = (this.ClientSize.Height - customerListBox.Height) / 2;
+                    customerListBox.BackColor = Color.Black;
+                    customerListBox.ForeColor = Color.White;
+                    customerListBox.Font = new Font(FontFamily.GenericMonospace, 16, FontStyle.Regular);
+
                     customerListBox.BringToFront(); // Ensure highest display priority
 
                     if (matches.Count == 1)
